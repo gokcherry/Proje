@@ -1,8 +1,8 @@
-﻿namespace WebProgramlamaProje.Models
+﻿namespace Proje.Models
 {
     public class Calisanlar
     {
-        public int calisan_ID { get; set; }
+        public int ID { get; set; }
         public string calisan_ad { get; set; }
         public string calisan_soyad { get; set; }
         public string email { get; set; }

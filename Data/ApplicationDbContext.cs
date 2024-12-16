@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using WebProgramlamaProje.Models;
+using Proje.Models;
 
-namespace WebProgramlamaProje.Data
+namespace Proje.Data
 {
     public class ApplicationDbContext : IdentityDbContext
     {

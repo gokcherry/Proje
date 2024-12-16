@@ -1,8 +1,8 @@
-﻿namespace WebProgramlamaProje.Models
+﻿namespace Proje.Models
 {
     public class Randevular
     {
-        public int randevu_ID { get; set; }
+        public int ID { get; set; }
         public int musteri_ID { get; set; }
         public int calisan_ID { get; set; }
         public int uzmanlik_ID { get; set; }

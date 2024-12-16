@@ -12,8 +12,8 @@ using Proje.Data;
 namespace Proje.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241216153553_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20241216170553_UpdateEntities")]
+    partial class UpdateEntities
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

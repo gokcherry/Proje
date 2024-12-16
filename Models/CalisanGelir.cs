@@ -1,8 +1,8 @@
-﻿namespace WebProgramlamaProje.Models
+﻿namespace Proje.Models
 {
     public class CalisanGelir
     {
-        public int id { get; set; }
+        public int ID { get; set; }
         public int calisan_ID { get; set; }
         public DateTime tarih {  get; set; }
         public decimal toplam_gelir {  get; set; }

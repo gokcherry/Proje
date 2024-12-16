@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using WebProgramlamaProje.Data;
+using Proje.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 

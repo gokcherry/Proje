@@ -1,4 +1,4 @@
-﻿namespace WebProgramlamaProje.Models
+﻿namespace Proje.Models
 {
     public class UzmanlikAlanlari
     {

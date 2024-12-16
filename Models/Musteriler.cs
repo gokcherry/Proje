@@ -1,8 +1,8 @@
-﻿namespace WebProgramlamaProje.Models
+﻿namespace Proje.Models
 {
     public class Musteriler
     {
-        public int musteri_ID {  get; set; }
+        public int ID {  get; set; }
         public string ad {  get; set; }
         public string soyad { get; set; }
         public string telefon { get; set; }

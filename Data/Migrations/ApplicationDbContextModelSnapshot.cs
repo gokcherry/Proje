@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using WebProgramlamaProje.Data;
+using Proje.Data;
 
 #nullable disable
 
-namespace WebProgramlamaProje.Data.Migrations
+namespace Proje.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     partial class ApplicationDbContextModelSnapshot : ModelSnapshot
@@ -224,7 +224,7 @@ namespace WebProgramlamaProje.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("WebProgramlamaProje.Models.CalisanGelir", b =>
+            modelBuilder.Entity("Proje.Models.CalisanGelir", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -251,7 +251,7 @@ namespace WebProgramlamaProje.Data.Migrations
                     b.ToTable("CalisanGelir");
                 });
 
-            modelBuilder.Entity("WebProgramlamaProje.Models.CalisanUzmanlik", b =>
+            modelBuilder.Entity("Proje.Models.CalisanUzmanlik", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -280,7 +280,7 @@ namespace WebProgramlamaProje.Data.Migrations
                     b.ToTable("CalisanUzmanlik");
                 });
 
-            modelBuilder.Entity("WebProgramlamaProje.Models.Calisanlar", b =>
+            modelBuilder.Entity("Proje.Models.Calisanlar", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -312,7 +312,7 @@ namespace WebProgramlamaProje.Data.Migrations
                     b.ToTable("Calisanlar");
                 });
 
-            modelBuilder.Entity("WebProgramlamaProje.Models.Musteriler", b =>
+            modelBuilder.Entity("Proje.Models.Musteriler", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -352,7 +352,7 @@ namespace WebProgramlamaProje.Data.Migrations
                     b.ToTable("Musteriler");
                 });
 
-            modelBuilder.Entity("WebProgramlamaProje.Models.Randevular", b =>
+            modelBuilder.Entity("Proje.Models.Randevular", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -399,7 +399,7 @@ namespace WebProgramlamaProje.Data.Migrations
                     b.ToTable("Randevular");
                 });
 
-            modelBuilder.Entity("WebProgramlamaProje.Models.Salon", b =>
+            modelBuilder.Entity("Proje.Models.Salon", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -426,7 +426,7 @@ namespace WebProgramlamaProje.Data.Migrations
                     b.ToTable("Salon");
                 });
 
-            modelBuilder.Entity("WebProgramlamaProje.Models.UzmanlikAlanlari", b =>
+            modelBuilder.Entity("Proje.Models.UzmanlikAlanlari", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -500,9 +500,9 @@ namespace WebProgramlamaProje.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("WebProgramlamaProje.Models.CalisanGelir", b =>
+            modelBuilder.Entity("Proje.Models.CalisanGelir", b =>
                 {
-                    b.HasOne("WebProgramlamaProje.Models.Calisanlar", "calisan")
+                    b.HasOne("Proje.Models.Calisanlar", "calisan")
                         .WithMany()
                         .HasForeignKey("calisanID")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -511,15 +511,15 @@ namespace WebProgramlamaProje.Data.Migrations
                     b.Navigation("calisan");
                 });
 
-            modelBuilder.Entity("WebProgramlamaProje.Models.CalisanUzmanlik", b =>
+            modelBuilder.Entity("Proje.Models.CalisanUzmanlik", b =>
                 {
-                    b.HasOne("WebProgramlamaProje.Models.Calisanlar", "calisan")
+                    b.HasOne("Proje.Models.Calisanlar", "calisan")
                         .WithMany("UzmanlikAlanlari")
                         .HasForeignKey("calisanID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WebProgramlamaProje.Models.UzmanlikAlanlari", "uzmanlik")
+                    b.HasOne("Proje.Models.UzmanlikAlanlari", "uzmanlik")
                         .WithMany("calisanlar")
                         .HasForeignKey("uzmanlikID")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -530,21 +530,21 @@ namespace WebProgramlamaProje.Data.Migrations
                     b.Navigation("uzmanlik");
                 });
 
-            modelBuilder.Entity("WebProgramlamaProje.Models.Randevular", b =>
+            modelBuilder.Entity("Proje.Models.Randevular", b =>
                 {
-                    b.HasOne("WebProgramlamaProje.Models.Calisanlar", "calisan")
+                    b.HasOne("Proje.Models.Calisanlar", "calisan")
                         .WithMany("Randevular")
                         .HasForeignKey("calisanID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WebProgramlamaProje.Models.Musteriler", "musteri")
+                    b.HasOne("Proje.Models.Musteriler", "musteri")
                         .WithMany("randevular")
                         .HasForeignKey("musteriID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WebProgramlamaProje.Models.UzmanlikAlanlari", "uzmanlik")
+                    b.HasOne("Proje.Models.UzmanlikAlanlari", "uzmanlik")
                         .WithMany()
                         .HasForeignKey("uzmanlikID")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -557,19 +557,19 @@ namespace WebProgramlamaProje.Data.Migrations
                     b.Navigation("uzmanlik");
                 });
 
-            modelBuilder.Entity("WebProgramlamaProje.Models.Calisanlar", b =>
+            modelBuilder.Entity("Proje.Models.Calisanlar", b =>
                 {
                     b.Navigation("Randevular");
 
                     b.Navigation("UzmanlikAlanlari");
                 });
 
-            modelBuilder.Entity("WebProgramlamaProje.Models.Musteriler", b =>
+            modelBuilder.Entity("Proje.Models.Musteriler", b =>
                 {
                     b.Navigation("randevular");
                 });
 
-            modelBuilder.Entity("WebProgramlamaProje.Models.UzmanlikAlanlari", b =>
+            modelBuilder.Entity("Proje.Models.UzmanlikAlanlari", b =>
                 {
                     b.Navigation("calisanlar");
                 });
