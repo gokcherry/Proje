@@ -18,7 +18,7 @@ namespace Proje.Controllers
             return View();
         }
 
-        public IActionResult Privacy()
+        public IActionResult Hakkımızda()
         {
             return View();
         }
