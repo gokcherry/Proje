@@ -1,6 +1,11 @@
-﻿namespace Proje.Controllers
+﻿using System.Diagnostics;
+using Microsoft.AspNetCore.Mvc;
+using Proje.Models;
+using Proje.Data;
+namespace Proje.Controllers
 {
-    public class AdminController
+    public class AdminController:Controller
     {
+
     }
 }
