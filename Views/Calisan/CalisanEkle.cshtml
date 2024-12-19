@@ -44,9 +44,12 @@
 
     <div class="form-group">
         <label for="UzmanlikAlani">Uzmanlık Alanı</label>
-        <input asp-for="UzmanlikAlanlari" class="form-control" />
+        <select asp-for="UzmanlikAlanlari" class="form-control" asp-items="ViewBag.UzmanlikAlanlari" multiple="multiple">
+            <option value="">Bir uzmanlık alanı seçin</option>
+        </select>
         <span asp-validation-for="UzmanlikAlanlari" class="text-danger"></span>
     </div>
+
     <div class="form-group">
         <label for="KatilimTarihi">Katılım Tarihi</label>
         <input asp-for="katilim_tarih" class="form-control" type="date" />

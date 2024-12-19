@@ -7,7 +7,7 @@
         public int sure { get; set; }
         public decimal fiyat { get; set; }
 
-        public required ICollection<CalisanUzmanlik> calisanlar { get; set; }
+        public  ICollection<CalisanUzmanlik> calisanlar { get; set; }
 
     }
 }

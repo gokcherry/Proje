@@ -2,6 +2,7 @@
 using Proje.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Proje.Controllers
 {
@@ -16,8 +17,7 @@ namespace Proje.Controllers
 
         public IActionResult Index()
         {
-            var calisanlar = _context.Calisanlar.ToList();
-            return View(calisanlar);
+            return View();
         }
 
         public IActionResult CalisanDetay(int? id)
@@ -41,15 +41,32 @@ namespace Proje.Controllers
             return View(calisan);
         }
 
-       public IActionResult CalisanEkle()
+        public IActionResult CalisanEkle()
         {
+            /* var uzmanlikAlanlari = _context.UzmanlikAlanlari
+                              .Select(u => new SelectListItem
+                              {
+                                  Value = u.ID.ToString(),
+                                  Text = u.ad
+                              })
+                              .ToList();
+
+             // Uzmanlık alanlarını ViewBag ile View'a gönderiyoruz
+             ViewBag.UzmanlikAlanlari = uzmanlikAlanlari; */
+
+            ViewBag.UzmanlikAlanlari = _context.UzmanlikAlanlari.Select(u => new SelectListItem
+            {
+                Value = u.ID.ToString(),
+                Text = u.ad
+            }).ToList();
+
             return View();
         }
 
         // POST: Calisan/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CalisanEkle(Calisanlar calisan)
+        public async Task<IActionResult> CalisanEkle(Calisanlar calisan, int[] uzmanlik)
         {
             // Model doğrulaması
             if (!ModelState.IsValid)
@@ -60,6 +77,16 @@ namespace Proje.Controllers
 
             try
             {
+                foreach(var u in uzmanlik) {
+                    var uzmanlikAlan = new CalisanUzmanlik
+                    {
+                        calisan_ID = calisan.ID,
+                        uzmanlik_ID = u
+                    };
+                    _context.CalisanUzmanlik.Add(uzmanlikAlan);
+                }
+
+
                 calisan.katilim_tarih = DateTime.Now;
 
                 _context.Calisanlar.Add(calisan);
