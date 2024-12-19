@@ -1,17 +1,13 @@
-﻿using System.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
-using Proje.Models;
-using Proje.Data;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using Proje.Data;
+using Proje.Models;
+using System.Linq;
 
 namespace Proje.Controllers
 {
-    public class RandevuController: Controller
+    public class RandevuController : Controller
     {
         private readonly ApplicationDbContext _context;
 
@@ -22,7 +18,10 @@ namespace Proje.Controllers
 
         public IActionResult Index()
         {
-            var randevular = _context.Randevular.Include(x => x.musteri).Include(x => x.calisan).Include(x => x.uzmanlik)
+            var randevular = _context.Randevular
+                .Include(x => x.musteri)
+                .Include(x => x.calisan)
+                .Include(x => x.uzmanlik)
                 .Select(x => new
                 {
                     x.ID,
@@ -32,56 +31,53 @@ namespace Proje.Controllers
                     CalisanSoyad = x.calisan.calisan_soyad,
                     Uzmanlik = x.uzmanlik.ad,
                     x.randevu_tarih
-                }
-                ).ToList();
+                })
+                .ToList();
 
             return View(randevular);
         }
 
         public IActionResult RandevuDetay(int? id)
         {
-            if(id is null)
+            if (id == null)
             {
                 TempData["error"] = "Lütfen randevu ID bilgisini giriniz.";
-                return View("RandevuHata");
+                return RedirectToAction("Index");
             }
 
-            var r = _context.Randevular.Include(x => x.musteri.ad).Include(x => x.musteri.soyad)
-                .Include(x => x.calisan.calisan_ad).Include(x => x.calisan.calisan_soyad).Include(x => x.uzmanlik.ad)
+            var randevu = _context.Randevular
+                .Include(x => x.musteri)
+                .Include(x => x.calisan)
+                .Include(x => x.uzmanlik)
                 .FirstOrDefault(x => x.ID == id);
 
-            if(r==null)
+            if (randevu == null)
             {
                 TempData["error"] = "Geçerli bir randevu bulunamadı.";
-                return View("RandevuError");
+                return RedirectToAction("Index");
             }
 
-            return View(r);
+            return View(randevu);
         }
 
         public IActionResult Create()
         {
-            //ViewData["Musteriler"] = new SelectList(_context.Musteriler, "MusteriID", "MusteriAd");
-            ViewData["Calisanlar"] = new SelectList(_context.Calisanlar, "CalisanAd", "CalisanSoyad");
-            ViewData["UzmanlikAlanlari"] = new SelectList(_context.UzmanlikAlanlari, "UzmanlikAlani");
-
+            ViewData["Calisanlar"] = new SelectList(_context.Calisanlar, "CalisanID", "CalisanAdSoyad");
+            ViewData["UzmanlikAlanlari"] = new SelectList(_context.UzmanlikAlanlari, "ID", "Ad");
             return View();
         }
 
         [HttpPost]
-        //[ValidateAntiForgeryToken]
         public IActionResult Create(Randevular randevu)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                var musteriad = User.Identity.Name;
-                randevu.musteri_ID = musteri;
-                var eskirandevu = _context.Randevular.Where(x => x.calisan_ID == randevu.calisan_ID &&
-                x.randevu_tarih == randevu.randevu_tarih).FirstOrDefault();
+                var existingRandevu = _context.Randevular
+                    .FirstOrDefault(x => x.calisan_ID == randevu.calisan_ID && x.randevu_tarih == randevu.randevu_tarih);
 
-                if(eskirandevu!= null)
+                if (existingRandevu != null)
                 {
-                    TempData["error"] = "Bu çalışan için aynı tarihte başka bir randevu mecvut.";
+                    TempData["error"] = "Bu çalışan için aynı tarihte başka bir randevu mevcut.";
                     return View(randevu);
                 }
 
@@ -89,11 +85,11 @@ namespace Proje.Controllers
                 _context.SaveChanges();
 
                 TempData["msj"] = "Randevu başarıyla oluşturuldu.";
-
-                return RedirectToAction("Index");     
+                return RedirectToAction("Index");
             }
 
+            TempData["error"] = "Randevu oluşturulurken bir hata oluştu.";
+            return View(randevu);
         }
-
     }
 }
