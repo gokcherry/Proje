@@ -6,7 +6,7 @@
         public int calisan_ID { get; set; }
         public DateTime tarih {  get; set; }
         public decimal toplam_gelir {  get; set; }
-
+        
         public Calisanlar calisan { get; set; }
     }
 }

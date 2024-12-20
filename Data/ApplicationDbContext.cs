@@ -12,7 +12,6 @@ namespace Proje.Data
         }
         public DbSet<Calisanlar> Calisanlar { get; set; }
         public DbSet<CalisanGelir> CalisanGelir { get; set; }
-        public DbSet<CalisanUzmanlik> CalisanUzmanlik { get; set; }
         public DbSet<Musteriler> Musteriler { get; set; }
         public DbSet<Randevular> Randevular { get; set; }
         public DbSet<Salon> Salon { get; set; }
@@ -28,6 +27,12 @@ namespace Proje.Data
                 new UzmanlikAlanlari { ID = 3, ad = "Saç Şekillendirme", sure = 30, fiyat = 400 },
                 new UzmanlikAlanlari { ID = 4, ad = "Makyaj ", sure = 1, fiyat = 600 }
             );
+
+            modelBuilder.Entity<Randevular>()
+                        .HasOne(r => r.calisan)
+                        .WithMany(c => c.Randevular)
+                        .HasForeignKey(r => r.calisan_ID)
+                        .OnDelete(DeleteBehavior.Cascade);       
         }
     }
 }

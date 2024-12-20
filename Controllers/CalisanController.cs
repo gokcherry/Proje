@@ -29,7 +29,7 @@ namespace Proje.Controllers
             }
 
             var calisan = _context.Calisanlar
-                .Include(x => x.UzmanlikAlanlari)
+                .Include(x => x.uzmanlik)
                 .FirstOrDefault(x => x.ID == id);
 
             if (calisan == null)
@@ -43,18 +43,7 @@ namespace Proje.Controllers
 
         public IActionResult CalisanEkle()
         {
-            /* var uzmanlikAlanlari = _context.UzmanlikAlanlari
-                              .Select(u => new SelectListItem
-                              {
-                                  Value = u.ID.ToString(),
-                                  Text = u.ad
-                              })
-                              .ToList();
-
-             // Uzmanlık alanlarını ViewBag ile View'a gönderiyoruz
-             ViewBag.UzmanlikAlanlari = uzmanlikAlanlari; */
-
-            ViewBag.UzmanlikAlanlari = _context.UzmanlikAlanlari.Select(u => new SelectListItem
+              ViewBag.UzmanlikAlanlari = _context.UzmanlikAlanlari.Select(u => new SelectListItem
             {
                 Value = u.ID.ToString(),
                 Text = u.ad
@@ -66,40 +55,46 @@ namespace Proje.Controllers
         // POST: Calisan/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CalisanEkle(Calisanlar calisan, int[] uzmanlik)
+        public async Task<IActionResult> CalisanEkle(Calisanlar calisan)
         {
-            // Model doğrulaması
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                TempData["error"] = "Lütfen tüm alanları doğru şekilde doldurduğunuzdan emin olun.";
-                return View(calisan);
-            }
+                // Seçilen uzmanlık ID'si ile ilişkilendirme
+                var uzmanlik = await _context.UzmanlikAlanlari
+                    .FirstOrDefaultAsync(u => u.ID == calisan.uzmanlik_ID);
 
-            try
-            {
-                foreach(var u in uzmanlik) {
-                    var uzmanlikAlan = new CalisanUzmanlik
-                    {
-                        calisan_ID = calisan.ID,
-                        uzmanlik_ID = u
-                    };
-                    _context.CalisanUzmanlik.Add(uzmanlikAlan);
+                if (uzmanlik != null)
+                {
+                    // Çalışanı eklerken uzmanlık bilgisini ilişkilendiriyoruz
+                    calisan.uzmanlik = uzmanlik;
+
+                    _context.Calisanlar.Add(calisan);
+                    await _context.SaveChangesAsync();
+
+                    TempData["msj"] = $"{calisan.calisan_ad} {calisan.calisan_soyad} adlı çalışan başarıyla eklendi.";
+                    return RedirectToAction("Index");
                 }
-
-
-                calisan.katilim_tarih = DateTime.Now;
-
-                _context.Calisanlar.Add(calisan);
-                await _context.SaveChangesAsync();
-
-                TempData["msj"] = $"{calisan.calisan_ad} {calisan.calisan_soyad} adlı çalışan başarıyla eklendi.";
-                return RedirectToAction("Index");
+                else
+                {
+                    TempData["error"] = "Seçilen uzmanlık alanı geçerli değil.";
+                    ViewBag.UzmanlikAlanlari = _context.UzmanlikAlanlari
+                        .Select(u => new SelectListItem
+                        {
+                            Value = u.ID.ToString(),
+                            Text = u.ad
+                        }).ToList();
+                    return View(calisan);
+                }
             }
-            catch (Exception ex)
-            {
-                TempData["error"] = $"Çalışan eklenemedi. Hata: {ex.Message}";
-                return View(calisan);
-            }
+
+            TempData["error"] = "Formda hata var. Lütfen tüm alanları doğru şekilde doldurduğunuzdan emin olun.";
+            ViewBag.UzmanlikAlanlari = _context.UzmanlikAlanlari
+                .Select(u => new SelectListItem
+                {
+                    Value = u.ID.ToString(),
+                    Text = u.ad
+                }).ToList();
+            return View(calisan);
         }
         public IActionResult CalisanDuzenle(int? id)
         {
@@ -151,7 +146,7 @@ namespace Proje.Controllers
             }
 
             var calisan = _context.Calisanlar
-                .Include(x => x.UzmanlikAlanlari)
+                .Include(x => x.uzmanlik)
                 .Include(x => x.Randevular)
                 .FirstOrDefault(x => x.ID == id);
 
