@@ -36,7 +36,7 @@ namespace Proje.Models
         public string Durum { get; set; }
 
         public virtual Musteri Musteri { get; set; }
-        public virtual Calisan Calisan { get; set; }
+        public virtual Calisanlar Calisan { get; set; }
         public virtual UzmanlikAlanlari Uzmanlik { get; set; }
     }
 }

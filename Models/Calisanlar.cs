@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Proje.Models
 {
-    public class Calisan
+    public class Calisanlar
     {
         [Key]
         public int ID { get; set; }

@@ -21,6 +21,6 @@ namespace Proje.Models
         [Range(0, double.MaxValue, ErrorMessage = "Toplam gelir negatif olamaz.")]
         public decimal ToplamGelir { get; set; }
 
-        public virtual Calisan Calisan { get; set; }
+        public virtual Calisanlar Calisan { get; set; }
     }
 }

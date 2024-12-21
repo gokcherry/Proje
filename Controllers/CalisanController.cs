@@ -57,7 +57,7 @@ namespace Proje.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Ekle([Bind("Ad,Soyad,Email,Telefon")] Calisan calisan, int[] UzmanlikAlanlari)
+        public async Task<IActionResult> Ekle([Bind("Ad,Soyad,Email,Telefon")] Calisanlar calisan, int[] UzmanlikAlanlari)
         {
             if (ModelState.IsValid)
             {
@@ -100,7 +100,7 @@ namespace Proje.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Guncelle(int id, [Bind("ID,Ad,Soyad,Email,Telefon")] Calisan calisan, int[] UzmanlikAlanlari)
+        public async Task<IActionResult> Guncelle(int id, [Bind("ID,Ad,Soyad,Email,Telefon")] Calisanlar calisan, int[] UzmanlikAlanlari)
         {
             if (id != calisan.ID)
                 return NotFound();
