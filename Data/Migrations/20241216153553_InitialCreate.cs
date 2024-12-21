@@ -19,7 +19,6 @@ namespace Proje.Data.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     calisan_ad = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     calisan_soyad = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    uzmanlik_ID=table.Column<int>(type: "int", nullable: false),
                     email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     telefon = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     katilim_tarih = table.Column<DateTime>(type: "datetime2", nullable: false)
@@ -27,12 +26,6 @@ namespace Proje.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Calisanlar", x => x.ID);
-                    table.ForeignKey(
-                        name: "FK_Calisanlar_UzmanlikAlanlari_uzmanlik_ID",
-                        column: x => x.uzmanlik_ID,
-                        principalTable:"UzmanlikAlanlari",
-                        principalColumn:"ID",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -94,18 +87,46 @@ namespace Proje.Data.Migrations
                     calisan_ID = table.Column<int>(type: "int", nullable: false),
                     tarih = table.Column<DateTime>(type: "datetime2", nullable: false),
                     toplam_gelir = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    calisanID = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_CalisanGelir", x => x.ID);
                     table.ForeignKey(
-                        name: "FK_CalisanGelir_Calisanlar_calisan_ID",
-                        column: x => x.calisan_ID,
+                        name: "FK_CalisanGelir_Calisanlar_calisanID",
+                        column: x => x.calisanID,
                         principalTable: "Calisanlar",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "CalisanUzmanlik",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    calisan_ID = table.Column<int>(type: "int", nullable: false),
+                    uzmanlik_ID = table.Column<int>(type: "int", nullable: false),
+                    calisanID = table.Column<int>(type: "int", nullable: false),
+                    uzmanlikID = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CalisanUzmanlik", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_CalisanUzmanlik_Calisanlar_calisanID",
+                        column: x => x.calisanID,
+                        principalTable: "Calisanlar",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CalisanUzmanlik_UzmanlikAlanlari_uzmanlikID",
+                        column: x => x.uzmanlikID,
+                        principalTable: "UzmanlikAlanlari",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                });
 
             migrationBuilder.CreateTable(
                 name: "Randevular",
@@ -119,25 +140,28 @@ namespace Proje.Data.Migrations
                     randevu_tarih = table.Column<DateTime>(type: "datetime2", nullable: false),
                     toplam_fiyat = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     durum = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    musteriID = table.Column<int>(type: "int", nullable: false),
+                    calisanID = table.Column<int>(type: "int", nullable: false),
+                    uzmanlikID = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Randevular", x => x.ID);
                     table.ForeignKey(
                         name: "FK_Randevular_Calisanlar_calisanID",
-                        column: x => x.calisan_ID,
+                        column: x => x.calisanID,
                         principalTable: "Calisanlar",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Randevular_Musteriler_musteriID",
-                        column: x => x.musteri_ID,
+                        column: x => x.musteriID,
                         principalTable: "Musteriler",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Randevular_UzmanlikAlanlari_uzmanlikID",
-                        column: x => x.uzmanlik_ID,
+                        column: x => x.uzmanlikID,
                         principalTable: "UzmanlikAlanlari",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
@@ -146,27 +170,32 @@ namespace Proje.Data.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_CalisanGelir_calisanID",
                 table: "CalisanGelir",
-                column: "calisan_ID");
+                column: "calisanID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Calisanlar_uzmanlikID",
-                table: "Calisanlar",
-                column: "uzmanlik_ID");
+                name: "IX_CalisanUzmanlik_calisanID",
+                table: "CalisanUzmanlik",
+                column: "calisanID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CalisanUzmanlik_uzmanlikID",
+                table: "CalisanUzmanlik",
+                column: "uzmanlikID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Randevular_calisanID",
                 table: "Randevular",
-                column: "calisan_ID");
+                column: "calisanID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Randevular_musteriID",
                 table: "Randevular",
-                column: "musteri_ID");
+                column: "musteriID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Randevular_uzmanlikID",
                 table: "Randevular",
-                column: "uzmanlik_ID");
+                column: "uzmanlikID");
         }
 
         /// <inheritdoc />
@@ -174,6 +203,9 @@ namespace Proje.Data.Migrations
         {
             migrationBuilder.DropTable(
                 name: "CalisanGelir");
+
+            migrationBuilder.DropTable(
+                name: "CalisanUzmanlik");
 
             migrationBuilder.DropTable(
                 name: "Randevular");

@@ -1,0 +1,31 @@
+﻿@model Proje.Models.Calisan
+
+<h1>Çalışan Detayları</h1>
+
+<div>
+    <h4>Çalışan</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">Ad</dt>
+        <dd class="col-sm-10">@Model.Ad</dd>
+        <dt class="col-sm-2">Soyad</dt>
+        <dd class="col-sm-10">@Model.Soyad</dd>
+        <dt class="col-sm-2">Email</dt>
+        <dd class="col-sm-10">@Model.Email</dd>
+        <dt class="col-sm-2">Telefon</dt>
+        <dd class="col-sm-10">@Model.Telefon</dd>
+        <dt class="col-sm-2">Uzmanlık Alanları</dt>
+        <dd class="col-sm-10">
+            <ul>
+                @foreach (var uzmanlik in Model.UzmanlikAlanlari)
+                {
+                    <li>@uzmanlik.Uzmanlik.Ad</li>
+                }
+            </ul>
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Guncelle" asp-route-id="@Model.ID" class="btn btn-warning">Guncelle</a>
+    <a asp-action="Listele" class="btn btn-secondary">Listeye geri dön</a>
+</div>

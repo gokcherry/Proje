@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Proje.Data;
 
@@ -11,9 +12,11 @@ using Proje.Data;
 namespace Proje.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241220220818_Add-Migration Uptdate")]
+    partial class AddMigrationUptdate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -224,37 +227,6 @@ namespace Proje.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Proje.Models.Calisan", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
-
-                    b.Property<string>("Ad")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Soyad")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("Telefon")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ID");
-
-                    b.ToTable("Calisan");
-                });
-
             modelBuilder.Entity("Proje.Models.CalisanGelir", b =>
                 {
                     b.Property<int>("ID")
@@ -263,18 +235,21 @@ namespace Proje.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
-                    b.Property<int>("CalisanID")
+                    b.Property<int>("calisanID")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("Tarih")
+                    b.Property<int>("calisan_ID")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("tarih")
                         .HasColumnType("datetime2");
 
-                    b.Property<decimal>("ToplamGelir")
+                    b.Property<decimal>("toplam_gelir")
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("ID");
 
-                    b.HasIndex("CalisanID");
+                    b.HasIndex("calisanID");
 
                     b.ToTable("CalisanGelir");
                 });
@@ -287,22 +262,28 @@ namespace Proje.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
-                    b.Property<int>("CalisanID")
+                    b.Property<int>("calisanID")
                         .HasColumnType("int");
 
-                    b.Property<int>("UzmanlikID")
+                    b.Property<int>("calisan_ID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("uzmanlikID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("uzmanlik_ID")
                         .HasColumnType("int");
 
                     b.HasKey("ID");
 
-                    b.HasIndex("CalisanID");
+                    b.HasIndex("calisanID");
 
-                    b.HasIndex("UzmanlikID");
+                    b.HasIndex("uzmanlikID");
 
                     b.ToTable("CalisanUzmanlik");
                 });
 
-            modelBuilder.Entity("Proje.Models.Musteri", b =>
+            modelBuilder.Entity("Proje.Models.Calisanlar", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -310,26 +291,62 @@ namespace Proje.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
-                    b.Property<string>("Ad")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("Email")
+                    b.Property<string>("calisan_ad")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Sifre")
+                    b.Property<string>("calisan_soyad")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Soyad")
+                    b.Property<string>("email")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Telefon")
+                    b.Property<DateTime>("katilim_tarih")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("telefon")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("Calisanlar");
+                });
+
+            modelBuilder.Entity("Proje.Models.Musteriler", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<string>("ad")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("kayit_tarih")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("rol")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("sifre")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("soyad")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("telefon")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -338,7 +355,7 @@ namespace Proje.Data.Migrations
                     b.ToTable("Musteriler");
                 });
 
-            modelBuilder.Entity("Proje.Models.Randevu", b =>
+            modelBuilder.Entity("Proje.Models.Randevular", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -346,33 +363,41 @@ namespace Proje.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
-                    b.Property<int>("CalisanID")
+                    b.Property<int>("calisanID")
                         .HasColumnType("int");
 
-                    b.Property<string>("Durum")
+                    b.Property<int>("calisan_ID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("durum")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("MusteriID")
+                    b.Property<int>("musteriID")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("RandevuTarihi")
+                    b.Property<int>("musteri_ID")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("randevu_tarih")
                         .HasColumnType("datetime2");
 
-                    b.Property<decimal>("ToplamFiyat")
+                    b.Property<decimal>("toplam_fiyat")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("UzmanlikID")
+                    b.Property<int>("uzmanlikID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("uzmanlik_ID")
                         .HasColumnType("int");
 
                     b.HasKey("ID");
 
-                    b.HasIndex("CalisanID");
+                    b.HasIndex("calisanID");
 
-                    b.HasIndex("MusteriID");
+                    b.HasIndex("musteriID");
 
-                    b.HasIndex("UzmanlikID");
+                    b.HasIndex("uzmanlikID");
 
                     b.ToTable("Randevular");
                 });
@@ -385,21 +410,19 @@ namespace Proje.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
-                    b.Property<TimeSpan>("AcilisSaati")
+                    b.Property<TimeSpan>("acilis_saati")
                         .HasColumnType("time");
 
-                    b.Property<string>("Ad")
+                    b.Property<string>("gun")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Gun")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<TimeSpan>("KapanisSaati")
+                    b.Property<TimeSpan>("kapanis_saati")
                         .HasColumnType("time");
+
+                    b.Property<string>("salon_ad")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
 
@@ -414,15 +437,14 @@ namespace Proje.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
-                    b.Property<string>("Ad")
+                    b.Property<string>("ad")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal>("Fiyat")
+                    b.Property<decimal>("fiyat")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("Sure")
+                    b.Property<int>("sure")
                         .HasColumnType("int");
 
                     b.HasKey("ID");
@@ -483,76 +505,76 @@ namespace Proje.Data.Migrations
 
             modelBuilder.Entity("Proje.Models.CalisanGelir", b =>
                 {
-                    b.HasOne("Proje.Models.Calisan", "Calisan")
+                    b.HasOne("Proje.Models.Calisanlar", "calisan")
                         .WithMany()
-                        .HasForeignKey("CalisanID")
+                        .HasForeignKey("calisanID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Calisan");
+                    b.Navigation("calisan");
                 });
 
             modelBuilder.Entity("Proje.Models.CalisanUzmanlik", b =>
                 {
-                    b.HasOne("Proje.Models.Calisan", "Calisan")
+                    b.HasOne("Proje.Models.Calisanlar", "calisan")
                         .WithMany("UzmanlikAlanlari")
-                        .HasForeignKey("CalisanID")
+                        .HasForeignKey("calisanID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Proje.Models.UzmanlikAlanlari", "Uzmanlik")
-                        .WithMany("Calisanlar")
-                        .HasForeignKey("UzmanlikID")
+                    b.HasOne("Proje.Models.UzmanlikAlanlari", "uzmanlik")
+                        .WithMany("calisanlar")
+                        .HasForeignKey("uzmanlikID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Calisan");
+                    b.Navigation("calisan");
 
-                    b.Navigation("Uzmanlik");
+                    b.Navigation("uzmanlik");
                 });
 
-            modelBuilder.Entity("Proje.Models.Randevu", b =>
+            modelBuilder.Entity("Proje.Models.Randevular", b =>
                 {
-                    b.HasOne("Proje.Models.Calisan", "Calisan")
+                    b.HasOne("Proje.Models.Calisanlar", "calisan")
                         .WithMany("Randevular")
-                        .HasForeignKey("CalisanID")
+                        .HasForeignKey("calisanID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Proje.Models.Musteri", "Musteri")
-                        .WithMany("Randevular")
-                        .HasForeignKey("MusteriID")
+                    b.HasOne("Proje.Models.Musteriler", "musteri")
+                        .WithMany("randevular")
+                        .HasForeignKey("musteriID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Proje.Models.UzmanlikAlanlari", "Uzmanlik")
+                    b.HasOne("Proje.Models.UzmanlikAlanlari", "uzmanlik")
                         .WithMany()
-                        .HasForeignKey("UzmanlikID")
+                        .HasForeignKey("uzmanlikID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Calisan");
+                    b.Navigation("calisan");
 
-                    b.Navigation("Musteri");
+                    b.Navigation("musteri");
 
-                    b.Navigation("Uzmanlik");
+                    b.Navigation("uzmanlik");
                 });
 
-            modelBuilder.Entity("Proje.Models.Calisan", b =>
+            modelBuilder.Entity("Proje.Models.Calisanlar", b =>
                 {
                     b.Navigation("Randevular");
 
                     b.Navigation("UzmanlikAlanlari");
                 });
 
-            modelBuilder.Entity("Proje.Models.Musteri", b =>
+            modelBuilder.Entity("Proje.Models.Musteriler", b =>
                 {
-                    b.Navigation("Randevular");
+                    b.Navigation("randevular");
                 });
 
             modelBuilder.Entity("Proje.Models.UzmanlikAlanlari", b =>
                 {
-                    b.Navigation("Calisanlar");
+                    b.Navigation("calisanlar");
                 });
 #pragma warning restore 612, 618
         }

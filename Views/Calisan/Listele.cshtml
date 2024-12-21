@@ -1,0 +1,57 @@
+﻿@model IEnumerable<Proje.Models.Calisan>
+
+@{
+    ViewData["Title"] = "Calışanları Listele";
+}
+
+<h1>Calışan Listesi</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Ad</th>
+            <th>Soyad</th>
+            <th>Email</th>
+            <th>Telefon</th>
+            <th>Uzmanlık Alanları</th>
+            <th>İşlemler</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var calisan in Model)
+        {
+            <tr>
+                <td>@calisan.ID</td>
+                <td>@calisan.Ad</td>
+                <td>@calisan.Soyad</td>
+                <td>@calisan.Email</td>
+                <td>@calisan.Telefon</td>
+                <td>
+                    @if (calisan.UzmanlikAlanlari != null && calisan.UzmanlikAlanlari.Any())
+                    {
+                        <ul>
+                            @foreach (var uzmanlik in calisan.UzmanlikAlanlari)
+                            {
+                                <li>@uzmanlik.Uzmanlik.Ad</li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <span>Uzmanlık Alanları Yok</span>
+                    }
+                </td>
+                <td>
+                    <a asp-action="Guncelle" asp-route-id="@calisan.ID" class="btn btn-sm btn-warning">Güncelle</a>
+                    <a asp-action="Detay" asp-route-id="@calisan.ID" class="btn btn-sm btn-info">Detay</a>
+                    <a asp-action="Sil" asp-route-id="@calisan.ID" class="btn btn-sm btn-danger">Sil</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div>
+    <a asp-action="Ekle" class="btn btn-primary">Yeni Çalışan Ekle</a>
+</div>

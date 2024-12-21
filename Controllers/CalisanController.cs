@@ -1,8 +1,10 @@
-﻿using Proje.Data;
-using Proje.Models;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using Proje.Data;
+using Proje.Models;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Proje.Controllers
 {
@@ -15,158 +17,167 @@ namespace Proje.Controllers
             _context = context;
         }
 
-        public IActionResult Index()
+        public IActionResult Hata(string mesaj)
         {
+            ViewData["HataMesaji"] = mesaj;
             return View();
         }
 
-        public IActionResult CalisanDetay(int? id)
+        public async Task<IActionResult> Listele()
+        {
+            var calisanlar = await _context.Calisan
+                .Include(c => c.UzmanlikAlanlari)
+                    .ThenInclude(cu => cu.Uzmanlik)
+                .ToListAsync();
+
+            return View(calisanlar);
+        }
+
+        public async Task<IActionResult> Detay(int? id)
         {
             if (id == null)
-            {
-                TempData["error"] = "Lütfen çalışan ID bilgisini giriniz.";
-                return View("Error");
-            }
+                return NotFound();
 
-            var calisan = _context.Calisanlar
-                .Include(x => x.uzmanlik)
-                .FirstOrDefault(x => x.ID == id);
+            var calisan = await _context.Calisan
+                .Include(c => c.UzmanlikAlanlari)
+                    .ThenInclude(cu => cu.Uzmanlik)
+                .FirstOrDefaultAsync(m => m.ID == id);
 
             if (calisan == null)
-            {
-                TempData["error"] = "Geçerli bir çalışan ID bulunamadı.";
-                return View("Error");
-            }
+                return NotFound();
 
             return View(calisan);
         }
 
-        public IActionResult CalisanEkle()
+        public IActionResult Ekle()
         {
-              ViewBag.UzmanlikAlanlari = _context.UzmanlikAlanlari.Select(u => new SelectListItem
-            {
-                Value = u.ID.ToString(),
-                Text = u.ad
-            }).ToList();
-
+            ViewData["UzmanlikAlanlari"] = new SelectList(_context.UzmanlikAlanlari, "ID", "Ad");
             return View();
         }
 
-        // POST: Calisan/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CalisanEkle(Calisanlar calisan)
+        public async Task<IActionResult> Ekle([Bind("Ad,Soyad,Email,Telefon")] Calisan calisan, int[] UzmanlikAlanlari)
         {
             if (ModelState.IsValid)
             {
-                // Seçilen uzmanlık ID'si ile ilişkilendirme
-                var uzmanlik = await _context.UzmanlikAlanlari
-                    .FirstOrDefaultAsync(u => u.ID == calisan.uzmanlik_ID);
+                _context.Add(calisan);
+                await _context.SaveChangesAsync();
 
-                if (uzmanlik != null)
+                foreach (var uzmanlikId in UzmanlikAlanlari)
                 {
-                    // Çalışanı eklerken uzmanlık bilgisini ilişkilendiriyoruz
-                    calisan.uzmanlik = uzmanlik;
-
-                    _context.Calisanlar.Add(calisan);
-                    await _context.SaveChangesAsync();
-
-                    TempData["msj"] = $"{calisan.calisan_ad} {calisan.calisan_soyad} adlı çalışan başarıyla eklendi.";
-                    return RedirectToAction("Index");
+                    var calisanUzmanlik = new CalisanUzmanlik
+                    {
+                        CalisanID = calisan.ID,
+                        UzmanlikID = uzmanlikId
+                    };
+                    _context.Add(calisanUzmanlik);
                 }
-                else
-                {
-                    TempData["error"] = "Seçilen uzmanlık alanı geçerli değil.";
-                    ViewBag.UzmanlikAlanlari = _context.UzmanlikAlanlari
-                        .Select(u => new SelectListItem
-                        {
-                            Value = u.ID.ToString(),
-                            Text = u.ad
-                        }).ToList();
-                    return View(calisan);
-                }
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction(nameof(Listele));
             }
 
-            TempData["error"] = "Formda hata var. Lütfen tüm alanları doğru şekilde doldurduğunuzdan emin olun.";
-            ViewBag.UzmanlikAlanlari = _context.UzmanlikAlanlari
-                .Select(u => new SelectListItem
-                {
-                    Value = u.ID.ToString(),
-                    Text = u.ad
-                }).ToList();
+            ViewData["UzmanlikAlanlari"] = new SelectList(_context.UzmanlikAlanlari, "ID", "Ad");
             return View(calisan);
         }
-        public IActionResult CalisanDuzenle(int? id)
+
+        public async Task<IActionResult> Guncelle(int? id)
         {
             if (id == null)
-            {
-                TempData["error"] = "Düzenleme için ID gerekli. Lütfen boş geçmeyiniz.";
-                return View("Error");
-            }
+                return NotFound();
 
-            var calisan = _context.Calisanlar.FirstOrDefault(x => x.ID == id);
+            var calisan = await _context.Calisan
+                .Include(c => c.UzmanlikAlanlari)
+                .FirstOrDefaultAsync(c => c.ID == id);
 
             if (calisan == null)
-            {
-                TempData["error"] = "Geçerli bir çalışan ID bulunamadı.";
-                return View("Error");
-            }
+                return NotFound();
 
+            ViewData["UzmanlikAlanlari"] = new SelectList(_context.UzmanlikAlanlari, "ID", "Ad");
             return View(calisan);
         }
 
         [HttpPost]
-        public IActionResult CalisanDuzenle(int? id, Calisanlar calisan)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Guncelle(int id, [Bind("ID,Ad,Soyad,Email,Telefon")] Calisan calisan, int[] UzmanlikAlanlari)
         {
             if (id != calisan.ID)
-            {
-                TempData["error"] = "ID bulunamadı.";
-                return View("Error");
-            }
+                return NotFound();
 
             if (ModelState.IsValid)
             {
-                _context.Calisanlar.Update(calisan);
-                _context.SaveChanges();
+                try
+                {
+                    _context.Update(calisan);
+                    await _context.SaveChangesAsync();
 
-                TempData["msj"] = $"{calisan.calisan_ad} {calisan.calisan_soyad} adlı çalışanın bilgileri güncellendi.";
-                return RedirectToAction("Index");
+                    var mevcutUzmanliklar = _context.CalisanUzmanlik.Where(cu => cu.CalisanID == calisan.ID);
+                    _context.CalisanUzmanlik.RemoveRange(mevcutUzmanliklar);
+                    await _context.SaveChangesAsync();
+
+                    foreach (var uzmanlikId in UzmanlikAlanlari)
+                    {
+                        var calisanUzmanlik = new CalisanUzmanlik
+                        {
+                            CalisanID = calisan.ID,
+                            UzmanlikID = uzmanlikId
+                        };
+                        _context.Add(calisanUzmanlik);
+                    }
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!CalisanVarMi(calisan.ID))
+                        return NotFound();
+                    throw;
+                }
+                return RedirectToAction(nameof(Listele));
             }
 
-            TempData["error"] = "Lütfen tüm alanları doldurun.";
+            ViewData["UzmanlikAlanlari"] = new SelectList(_context.UzmanlikAlanlari, "ID", "Ad");
             return View(calisan);
         }
 
-        public IActionResult CalisanSil(int? id)
+        public IActionResult Sil(int? id)
         {
             if (id == null)
             {
-                TempData["error"] = "Silme işlemini gerçekleştirmek için ID gerekli. Boş geçmeyiniz.";
-                return View("Error");
+                TempData["hata"] = "Silme işlemini gerçekleştirmek için ID gerekli. Boş geçmeyiniz.";
+                return RedirectToAction("Hata", new { mesaj = "ID gerekli." });
             }
 
-            var calisan = _context.Calisanlar
-                .Include(x => x.uzmanlik)
-                .Include(x => x.Randevular)
-                .FirstOrDefault(x => x.ID == id);
+            var calisan = _context.Calisan
+                .Include(c => c.UzmanlikAlanlari)
+                .Include(c => c.Randevular)
+                .FirstOrDefault(c => c.ID == id);
 
             if (calisan == null)
             {
-                TempData["error"] = "Çalışan sistemde mevcut değil.";
-                return View("Error");
+                TempData["hata"] = "Silinmek istenen çalışan sistemde mevcut değil.";
+                return RedirectToAction("Hata", new { mesaj = "Çalışan bulunamadı." });
             }
 
-            if (calisan.Randevular.Any())
+            if (calisan.Randevular != null && calisan.Randevular.Any())
             {
-                TempData["error"] = "Çalışanın randevuları mevcut.";
-                return View("Error");
+                TempData["hata"] = "Çalışanın randevuları mevcut. Silmeden önce ilişkili randevuları kaldırmanız gerekir.";
+                return RedirectToAction("Hata", new { mesaj = "Çalışanın randevuları mevcut." });
             }
 
-            _context.Calisanlar.Remove(calisan);
+            var uzmanliklar = _context.CalisanUzmanlik.Where(cu => cu.CalisanID == calisan.ID);
+            _context.CalisanUzmanlik.RemoveRange(uzmanliklar);
+
+            _context.Calisan.Remove(calisan);
             _context.SaveChanges();
 
-            TempData["msj"] = $"{calisan.calisan_ad} {calisan.calisan_soyad} isimli çalışan sistemden silindi.";
-            return RedirectToAction("Index");
+            TempData["msj"] = $"{calisan.Ad} {calisan.Soyad} isimli çalışan başarıyla silindi.";
+            return RedirectToAction("Listele");
+        }
+
+        private bool CalisanVarMi(int id)
+        {
+            return _context.Calisan.Any(e => e.ID == id);
         }
     }
 }
