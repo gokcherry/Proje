@@ -1,0 +1,13 @@
+﻿admin index
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<h2>Admin Paneli</h2>
+
+<ul>
+    <li><a asp-action="Randevular" asp-controller="Admin">Randevuları Yönet</a></li>
+    <li><a asp-action="Calisanlar" asp-controller="Admin">Çalışanları Yönet</a></li>
+    <li><a asp-action="CalisanEkle" asp-controller="Admin">Çalışan Ekle</a></li>
+</ul>
+
