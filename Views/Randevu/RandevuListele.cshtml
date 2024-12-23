@@ -1,0 +1,37 @@
+﻿@model IEnumerable<dynamic>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Randevu ID</th>
+            <th>Müşteri Adı Soyadı</th>
+            <th>Çalışan Adı Soyadı</th>
+            <th>Uzmanlık Alanı</th>
+            <th>Randevu Tarihi</th>
+            <th>Randevu Saati</th>
+            <th>Randevu Durumu</th>
+            <th>Toplam Fiyat</th>
+            <th>İşlemler</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var randevu in Model)
+        {
+            <tr>
+                <td>@randevu.ID</td>
+                <td>@randevu.MusteriAdiSoyadi</td>
+                <td>@randevu.PersonelAdiSoyadi</td>
+                <td>@randevu.Islem</td>
+                <td>@randevu.RandevuTarihi</td>
+                <td>@randevu.RandevuSaati</td>
+                <td>@randevu.RandevuDurumu</td>
+                <td>@randevu.ToplamFiyat</td>
+                <td>
+                    <a href="@Url.Action("Guncelle", new { id = randevu.ID })">Güncelle</a> |
+                    <a href="@Url.Action("Sil", new { id = randevu.ID })">Sil</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+

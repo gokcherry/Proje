@@ -1,47 +1,33 @@
-﻿using System.Diagnostics;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Proje.Models;
-using Proje.Data;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
-namespace Proje.Areas.Admin.Controllers
-{
+using Proje.Data;
 
+namespace Proje.Controllers
+{
     [Authorize(Roles = "Admin")]
-    [Area("Admin")]
-    public class AdminLayoutController : Controller
+    public class AdminController : Controller
     {
         private readonly ApplicationDbContext _context;
-        public AdminLayoutController(ApplicationDbContext context)
+        public AdminController(ApplicationDbContext context)
         {
             _context = context;
         }
-
         public IActionResult Index()
         {
             return View();
         }
-
         public IActionResult RandevuListele()
         {
-            var randevular = _context.Randevular
-                .Include(r => r.Musteri)
-                .Include(r => r.Calisan)
-                .Include(r => r.Uzmanlik)
-                .Select(r => new
-                {
-                    r.ID,
-                    MusteriAdi = r.Musteri.Ad,
-                    MusteriSoyadi = r.Musteri.Soyad,
-                    PersonelAdiSoyadi = $"{r.Calisan.Ad} {r.Calisan.Soyad}",
-                    Islem = r.Uzmanlik.Ad,
-                    RandevuTarihi = r.RandevuTarihi.ToString("yyyy-MM-dd"),
-                    RandevuSaati = r.RandevuTarihi.ToString("HH:mm"),
-                    RandevuDurumu = r.Durum
-                })
-                .ToList();
-
-            return View(randevular);
+            return RedirectToAction("RandevuListele", "Randevu");
+        }
+        public IActionResult RandevuGuncelle()
+        {
+            return RedirectToAction("Guncelle", "Randevu");
+        }
+        public IActionResult RandevuSil()
+        {
+            return RedirectToAction("Sil", "Randevu");
         }
 
         public IActionResult Calisanlar()
@@ -74,6 +60,4 @@ namespace Proje.Areas.Admin.Controllers
 
     }
 }
-
-
 

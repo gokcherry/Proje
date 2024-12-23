@@ -69,6 +69,7 @@ app.MapAreaControllerRoute(
     .WithStaticAssets();
 
 
+
 app.MapRazorPages()
    .WithStaticAssets();
 

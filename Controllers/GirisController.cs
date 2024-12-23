@@ -15,13 +15,13 @@ namespace Proje.Controllers
             }
 
             [HttpGet]
-            public IActionResult Login()
+            public IActionResult Giris()
             {
                 return View();
             }
 
             [HttpPost]
-        public async Task<IActionResult> Login(string email, string password)
+        public async Task<IActionResult> Giris(string email, string password)
         {
             if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
             {
@@ -50,6 +50,7 @@ namespace Proje.Controllers
                 {
                     return RedirectToAction("Index", "Home");
                 }
+
             }
             else
             {
@@ -58,9 +59,35 @@ namespace Proje.Controllers
             }
         }
 
+        [HttpGet]
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
 
         [HttpPost]
-            public async Task<IActionResult> Logout()
+        public async Task<IActionResult> ForgotPassword(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user != null)
+            {
+                // Şifre sıfırlama token'ı oluşturma
+                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+                // Şifre sıfırlama linkini e-posta ile gönderin (e-posta gönderme kodunu buraya ekleyin)
+                TempData["info"] = "Şifre sıfırlama bağlantısı e-posta adresinize gönderildi.";
+            }
+            else
+            {
+                TempData["error"] = "Bu e-posta adresine ait bir hesap bulunamadı.";
+            }
+
+            return RedirectToAction("Index");
+        }
+
+
+        [HttpPost]
+            public async Task<IActionResult> Cıkıs()
             {
                 await _signInManager.SignOutAsync();
                 return RedirectToAction("Login");

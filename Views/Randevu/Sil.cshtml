@@ -1,0 +1,17 @@
+﻿@model Proje.Models.Randevu
+
+<h2>Randevu Sil</h2>
+
+<p>Randevu ID: @Model.ID</p>
+<p>Müşteri: @Model.Musteri.Ad @Model.Musteri.Soyad</p>
+<p>Çalışan: @Model.Calisan.Ad @Model.Calisan.Soyad</p>
+<p>Uzmanlık: @Model.Uzmanlik.Ad</p>
+<p>Randevu Tarihi: @Model.RandevuTarihi</p>
+<p>Randevu Durumu: @Model.Durum</p>
+<p>Toplam Fiyat: @Model.ToplamFiyat</p>
+
+<form asp-action="DeleteConfirmed" method="post">
+    <input type="hidden" asp-for="ID" />
+    <button type="submit" class="btn btn-danger">Sil</button>
+</form>
+

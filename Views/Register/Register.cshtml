@@ -1,15 +1,15 @@
 ﻿@{
-    ViewData["Title"] = "Giriş Yap";
+    ViewData["Title"] = "Hesap Oluştur";
 }
 
-<h2>Giriş Yap</h2>
+<h2>Hesap Oluştur</h2>
 
-@if (TempData["error"] != null)
+@if (TempData["success"] != null)
 {
-    <div class="alert alert-danger">@TempData["error"]</div>
+    <div class="alert alert-success">@TempData["success"]</div>
 }
 
-<form asp-action="Login" method="post">
+<form asp-action="Register" method="post">
     <div class="form-group">
         <label for="email">E-posta</label>
         <input type="email" id="email" name="email" class="form-control" required />
@@ -18,5 +18,6 @@
         <label for="password">Şifre</label>
         <input type="password" id="password" name="password" class="form-control" required />
     </div>
-    <button type="submit" class="btn btn-primary">Giriş Yap</button>
+    <button type="submit" class="btn btn-primary">Hesap Oluştur</button>
 </form>
+
