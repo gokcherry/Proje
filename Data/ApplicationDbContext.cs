@@ -4,7 +4,7 @@ using Proje.Models;
 
 namespace Proje.Data
 {
-    public class ApplicationDbContext : IdentityDbContext
+    public class ApplicationDbContext : IdentityDbContext <Kullanicilar>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
