@@ -1,26 +1,28 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Proje.Controllers
 {
     public class GirisController : Controller
     {
-            private readonly SignInManager<IdentityUser> _signInManager;
-            private readonly UserManager<IdentityUser> _userManager;
+        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<IdentityUser> _userManager;
 
-            public GirisController(SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager)
-            {
-                _signInManager = signInManager;
-                _userManager = userManager;
-            }
+        public GirisController(SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager)
+        {
+            _signInManager = signInManager;
+            _userManager = userManager;
+        }
 
-            [HttpGet]
-            public IActionResult Giris()
-            {
-                return View();
-            }
+        [HttpGet]
+        public IActionResult Giris()
+        {
+            return View();
+        }
 
-            [HttpPost]
+        [HttpPost]
         public async Task<IActionResult> Giris(string email, string password)
         {
             if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
@@ -84,14 +86,14 @@ namespace Proje.Controllers
 
             return RedirectToAction("Index");
         }
-
-
         [HttpPost]
-            public async Task<IActionResult> Cıkıs()
-            {
-                await _signInManager.SignOutAsync();
-                return RedirectToAction("Login");
-            }
+        public async Task<IActionResult> Cikis()
+        {
+            // Kullanıcının oturumunu sonlandırır
+            await HttpContext.SignOutAsync(IdentityConstants.ApplicationScheme);
+
+            // Giriş sayfasına yönlendir
+            return RedirectToAction("Giris", "Giris");
         }
-    
+    }
 }

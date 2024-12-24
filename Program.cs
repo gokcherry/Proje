@@ -82,6 +82,10 @@ static async Task SeedAdminUser(UserManager<IdentityUser> userManager, RoleManag
     {
         await roleManager.CreateAsync(new IdentityRole("Admin"));
     }
+    if (!await roleManager.RoleExistsAsync("User"))
+    {
+        await roleManager.CreateAsync(new IdentityRole("User"));
+    }
 
     string adminEmail = "cerrahyaren@gmail.com";
     string adminPassword = "Admin123!";
