@@ -1,34 +1,30 @@
 ﻿@using Microsoft.AspNetCore.Identity
-@inject SignInManager<IdentityUser> SignInManager
-@inject UserManager<IdentityUser> UserManager
+@inject SignInManager<Kullanicilar> LoginManager
+@inject UserManager<Kullanicilar> UserManager
 
-<ul class="navbar-nav">
-    @if (SignInManager.IsSignedIn(User))
+<ul class="navbar-nav ms-auto">
+    @if (LoginManager.IsSignedIn(User))
     {
-        <li class="nav-item">
-            @if (User.IsInRole("Admin"))
-            {
-                <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="Index">Admin Paneli</a>
-            }
-            else
-            {
-                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Anasayfa</a>
-            }
-        </li>
-        <li class="nav-item">
-            <form class="form-inline" asp-area="" asp-controller="Giris" asp-action="Cikis" method="post">
-                <button type="submit" class="nav-link btn btn-link text-dark">Çıkış</button>
+        <li class="nav-item d-flex align-items-center">
+            <form asp-area="" asp-controller="Hesap" asp-action="Logout" method="post" class="d-inline m-0 p-0">
+                <button type="submit" class="nav-link btn btn-link text-dark p-0">
+                    <i class="bi bi-box-arrow-right"></i> Çıkış
+                </button>
             </form>
         </li>
+
     }
     else
     {
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="" asp-controller="Giris" asp-action="Giris">Giriş Yap</a>
+            <a class="nav-link text-dark" asp-area="" asp-controller="Hesap" asp-action="Login">
+                <i class="bi bi-box-arrow-in-right"></i> Giriş Yap
+            </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="" asp-controller="Register" asp-action="Register">Üye ol</a>
+            <a class="nav-link text-dark" asp-area="" asp-controller="Hesap" asp-action="Register">
+                <i class="bi bi-person-plus"></i> Üye Ol
+            </a>
         </li>
     }
 </ul>
-

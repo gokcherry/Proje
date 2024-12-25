@@ -13,7 +13,7 @@ namespace Proje.Data
         public DbSet<Calisanlar> Calisanlar { get; set; }
         public DbSet<CalisanGelir> CalisanGelir { get; set; }
         public DbSet<CalisanUzmanlik> CalisanUzmanlik { get; set; }
-        public DbSet<Musteri> Musteriler { get; set; }
+        public DbSet<Kullanicilar> Musteri { get; set; }
         public DbSet<Randevu> Randevular { get; set; }
         public DbSet<Salon> Salon { get; set; }
         public DbSet<UzmanlikAlanlari> UzmanlikAlanlari { get; set; }public DbSet<Calisanlar> Calisan { get; set; }

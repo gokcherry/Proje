@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System.Collections.Generic;
 
 namespace Proje.Models
 {
@@ -6,5 +7,7 @@ namespace Proje.Models
     {
         public string Ad { get; set; }
         public string Soyad { get; set; }
+        public string Telefon { get; set; }
+        public virtual ICollection<Randevu> Randevular { get; set; } = new List<Randevu>();
     }
 }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Proje.Data;
 
@@ -11,9 +12,11 @@ using Proje.Data;
 namespace Proje.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241225112811_yeni4")]
+    partial class yeni4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -286,10 +289,6 @@ namespace Proje.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Telefon")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
 
@@ -310,6 +309,42 @@ namespace Proje.Data.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("Proje.Models.Musteri", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<string>("Ad")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Sifre")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Soyad")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Telefon")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("Musteriler");
+                });
+
             modelBuilder.Entity("Proje.Models.Randevu", b =>
                 {
                     b.Property<int>("ID")
@@ -326,9 +361,8 @@ namespace Proje.Data.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
-                    b.Property<string>("MusteriID")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("MusteriID")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("RandevuTarihi")
                         .HasColumnType("datetime2");
@@ -492,7 +526,7 @@ namespace Proje.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Proje.Models.Kullanicilar", "Musteri")
+                    b.HasOne("Proje.Models.Musteri", "Musteri")
                         .WithMany("Randevular")
                         .HasForeignKey("MusteriID")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -518,7 +552,7 @@ namespace Proje.Data.Migrations
                     b.Navigation("UzmanlikAlanlari");
                 });
 
-            modelBuilder.Entity("Proje.Models.Kullanicilar", b =>
+            modelBuilder.Entity("Proje.Models.Musteri", b =>
                 {
                     b.Navigation("Randevular");
                 });

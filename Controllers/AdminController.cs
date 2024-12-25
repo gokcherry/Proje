@@ -9,6 +9,7 @@ namespace Proje.Controllers
     public class AdminController : Controller
     {
         private readonly ApplicationDbContext _context;
+
         public AdminController(ApplicationDbContext context)
         {
             _context = context;
@@ -21,43 +22,50 @@ namespace Proje.Controllers
         {
             return RedirectToAction("RandevuListele", "Randevu");
         }
-        public IActionResult RandevuGuncelle()
+        public IActionResult RandevuGuncelle(int id)
         {
-            return RedirectToAction("Guncelle", "Randevu");
+            return RedirectToAction("Guncelle", "Randevu", new { id });
         }
-        public IActionResult RandevuSil()
+        public IActionResult RandevuSil(int id)
         {
-            return RedirectToAction("Sil", "Randevu");
+            return RedirectToAction("Sil", "Randevu", new { id });
         }
-
         public IActionResult Calisanlar()
         {
             return RedirectToAction("Listele", "Calisan");
         }
-
-        // Çalışan Ekleme
         public IActionResult CalisanEkle()
         {
             return RedirectToAction("Ekle", "Calisan");
         }
-
-        // Çalışan Düzenleme
         public IActionResult CalisanDuzenle(int id)
         {
             return RedirectToAction("Guncelle", "Calisan", new { id });
         }
-
-        // Çalışan Silme
         public IActionResult CalisanSil(int id)
         {
             return RedirectToAction("Sil", "Calisan", new { id });
+        }
+        public IActionResult MusteriListele()
+        {
+            return RedirectToAction("Listele", "Musteri");
+        }
+        public IActionResult MusteriEkle()
+        {
+            return RedirectToAction("Ekle", "Musteri");
+        }
+        public IActionResult MusteriDuzenle(int id)
+        {
+            return RedirectToAction("Guncelle", "Musteri", new { id });
+        }
+        public IActionResult MusteriSil(int id)
+        {
+            return RedirectToAction("Sil", "Musteri", new { id });
         }
         [AllowAnonymous]
         public IActionResult YardimSayfasi()
         {
             return View();
         }
-
     }
 }
-

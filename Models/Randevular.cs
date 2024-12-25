@@ -1,5 +1,5 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;    
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Proje.Models
@@ -12,7 +12,7 @@ namespace Proje.Models
         [Required]
         [ForeignKey("Musteri")]
         [Range(1, int.MaxValue, ErrorMessage = "Geçerli bir müşteri ID giriniz.")]
-        public int MusteriID { get; set; }
+        public string MusteriID { get; set; }
 
         [Required]
         [ForeignKey("Calisan")]
@@ -34,9 +34,9 @@ namespace Proje.Models
         [Required(ErrorMessage = "Durum alanı zorunludur.")]
         [StringLength(20, ErrorMessage = "Durum en fazla 20 karakter olabilir.")]
         public string Durum { get; set; }
+        public Kullanicilar Musteri { get; set; }
 
-        public virtual Musteri Musteri { get; set; }
         public virtual Calisanlar Calisan { get; set; }
-        public virtual UzmanlikAlanlari Uzmanlik { get; set; }
+        public virtual UzmanlikAlanlari Uzmanlik { get; set; }  
     }
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Proje.Data;
@@ -8,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace Proje.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class CalisanController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -32,7 +34,6 @@ namespace Proje.Controllers
 
             return View(calisanlar);
         }
-
         public async Task<IActionResult> Detay(int? id)
         {
             if (id == null)
@@ -48,7 +49,6 @@ namespace Proje.Controllers
 
             return View(calisan);
         }
-
         public IActionResult Ekle()
         {
             ViewData["UzmanlikAlanlari"] = new SelectList(_context.UzmanlikAlanlari, "ID", "Ad");
@@ -81,7 +81,6 @@ namespace Proje.Controllers
             ViewData["UzmanlikAlanlari"] = new SelectList(_context.UzmanlikAlanlari, "ID", "Ad");
             return View(calisan);
         }
-
         public async Task<IActionResult> Guncelle(int? id)
         {
             if (id == null)
@@ -174,7 +173,6 @@ namespace Proje.Controllers
             TempData["msj"] = $"{calisan.Ad} {calisan.Soyad} isimli çalışan başarıyla silindi.";
             return RedirectToAction("Listele");
         }
-
         private bool CalisanVarMi(int id)
         {
             return _context.Calisan.Any(e => e.ID == id);

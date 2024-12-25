@@ -1,0 +1,51 @@
+﻿@model Proje.Models.Randevu
+@{
+    ViewData["Title"] = "Yeni Randevu Ekle";
+}
+
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Yeni Randevu Ekle</h2>
+
+    <form asp-action="Ekle" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+        <div class="mb-3">
+            <label for="MusteriID" class="form-label">Müşteri</label>
+            <select asp-for="MusteriID" class="form-control" asp-items="ViewBag.Musteriler"></select>
+            <span asp-validation-for="MusteriID" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label for="CalisanID" class="form-label">Çalışan</label>
+            <select asp-for="CalisanID" class="form-control" asp-items="ViewBag.Calisanlar"></select>
+            <span asp-validation-for="CalisanID" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label for="UzmanlikID" class="form-label">Uzmanlık</label>
+            <select asp-for="UzmanlikID" class="form-control" asp-items="ViewBag.UzmanlikAlanlari"></select>
+            <span asp-validation-for="UzmanlikID" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="RandevuTarihi" class="form-label">Tarih ve Saat</label>
+            <input asp-for="RandevuTarihi" class="form-control" type="datetime-local" />
+            <span asp-validation-for="RandevuTarihi" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Durum" class="form-label">Durum</label>
+            <input asp-for="Durum" class="form-control" />
+            <span asp-validation-for="Durum" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="ToplamFiyat" class="form-label">Toplam Fiyat</label>
+            <input asp-for="ToplamFiyat" class="form-control" />
+            <span asp-validation-for="ToplamFiyat" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Kaydet</button>
+        <a asp-action="RandevuListele" class="btn btn-secondary ms-2">İptal</a>
+    </form>
+</div>

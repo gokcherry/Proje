@@ -4,47 +4,59 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Proje.Data;
 using Proje.Models;
+using System.Linq;
+using System.Threading.Tasks;
+
 namespace Proje.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class RandevuController : Controller
     {
         private readonly ApplicationDbContext _context;
+
         public RandevuController(ApplicationDbContext context)
         {
             _context = context;
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Listele()
         {
-            return View();
-        }
-        public IActionResult RandevuListele()
-        {
-            var randevular = _context.Randevular
+            var randevular = await _context.Randevular
                 .Include(r => r.Musteri)
                 .Include(r => r.Calisan)
                 .Include(r => r.Uzmanlik)
-                .Select(r => new
-                {
-                    r.ID,
-                    MusteriAdi = r.Musteri.Ad,
-                    MusteriSoyadi = r.Musteri.Soyad,
-                    PersonelAdiSoyadi = $"{r.Calisan.Ad} {r.Calisan.Soyad}",
-                    Islem = r.Uzmanlik.Ad,
-                    RandevuTarihi = r.RandevuTarihi.ToString("yyyy-MM-dd"),
-                    RandevuSaati = r.RandevuTarihi.ToString("HH:mm"),
-                    RandevuDurumu = r.Durum,
-                    ToplamFiyat = r.ToplamFiyat.ToString()
-                })
-                .ToList();
+                .ToListAsync();
 
             return View(randevular);
+        }
+        public IActionResult Ekle()
+        {
+            ViewBag.Musteriler = new SelectList(_context.Musteri.ToList(), "Id", "Ad");
+            ViewBag.Calisanlar = new SelectList(_context.Calisan.ToList(), "Id", "Ad");
+            ViewBag.UzmanlikAlanlari = new SelectList(_context.UzmanlikAlanlari.ToList(), "Id", "Ad");
+
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Ekle(Randevu randevu)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.Add(randevu);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Listele));
+            }
+            ViewData["Musteriler"] = new SelectList(_context.Musteri, "ID", "Ad");
+            ViewData["Calisanlar"] = new SelectList(_context.Calisan, "ID", "Ad");
+            ViewData["UzmanlikAlanlari"] = new SelectList(_context.UzmanlikAlanlari, "ID", "Ad");
+
+            return View(randevu);
         }
         public async Task<IActionResult> Guncelle(int? id)
         {
             if (id == null)
-            {
-                return NotFound();
-            }
+                return NotFound("Randevu ID gerekli.");
 
             var randevu = await _context.Randevular
                 .Include(r => r.Musteri)
@@ -53,26 +65,21 @@ namespace Proje.Controllers
                 .FirstOrDefaultAsync(r => r.ID == id);
 
             if (randevu == null)
-            {
-                return NotFound();
-            }
+                return NotFound("Randevu bulunamadı.");
 
-            // DropDownList'ler için gerekli verileri ViewBag ile gönderiyoruz
-            ViewBag.Musteriler = new SelectList(_context.Musteriler, "ID", "Ad", randevu.MusteriID);
-            ViewBag.Calisanlar = new SelectList(_context.Calisanlar, "ID", "Ad", randevu.CalisanID);
-            ViewBag.Uzmanliklar = new SelectList(_context.UzmanlikAlanlari, "ID", "Ad", randevu.UzmanlikID);
+            ViewData["Musteriler"] = new SelectList(_context.Musteri, "ID", "Ad", randevu.MusteriID);
+            ViewData["Calisanlar"] = new SelectList(_context.Calisan, "ID", "Ad", randevu.CalisanID);
+            ViewData["UzmanlikAlanlari"] = new SelectList(_context.UzmanlikAlanlari, "ID", "Ad", randevu.UzmanlikID);
 
             return View(randevu);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Guncelle(int id, [Bind("ID,MusteriID,CalisanID,UzmanlikID,RandevuTarihi,ToplamFiyat,Durum")] Randevu randevu)
+        public async Task<IActionResult> Guncelle(int id, Randevu randevu)
         {
             if (id != randevu.ID)
-            {
-                return NotFound();
-            }
+                return NotFound("Randevu ID eşleşmiyor.");
 
             if (ModelState.IsValid)
             {
@@ -84,67 +91,49 @@ namespace Proje.Controllers
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!RandevuExists(randevu.ID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                        return NotFound("Randevu bulunamadı.");
+
+                    throw;
                 }
-                return RedirectToAction(nameof(RandevuListele));
+                return RedirectToAction(nameof(Listele));
             }
 
-            // DropDownList'ler için gerekli verileri ViewBag ile gönderiyoruz
-            ViewBag.Musteriler = new SelectList(_context.Musteriler, "ID", "Ad", randevu.MusteriID);
-            ViewBag.Calisanlar = new SelectList(_context.Calisanlar, "ID", "Ad", randevu.CalisanID);
-            ViewBag.Uzmanliklar = new SelectList(_context.UzmanlikAlanlari, "ID", "Ad", randevu.UzmanlikID);
+            ViewData["Musteriler"] = new SelectList(_context.Musteri, "ID", "Ad", randevu.MusteriID);
+            ViewData["Calisanlar"] = new SelectList(_context.Calisan, "ID", "Ad", randevu.CalisanID);
+            ViewData["UzmanlikAlanlari"] = new SelectList(_context.UzmanlikAlanlari, "ID", "Ad", randevu.UzmanlikID);
 
             return View(randevu);
         }
 
-        // 3. Randevu Silme
         public async Task<IActionResult> Sil(int? id)
         {
             if (id == null)
-            {
-                return NotFound();
-            }
+                return NotFound("Randevu ID gerekli.");
 
-            var randevu = _context.Randevular
-               .Include(r => r.Musteri)
-               .Include(r => r.Calisan)
-               .Include(r => r.Uzmanlik)
-               .Select(r => new
-               {
-                   r.ID,
-                   MusteriAdi = r.Musteri.Ad,
-                   MusteriSoyadi = r.Musteri.Soyad,
-                   PersonelAdiSoyadi = $"{r.Calisan.Ad} {r.Calisan.Soyad}",
-                   Islem = r.Uzmanlik.Ad,
-                   RandevuTarihi = r.RandevuTarihi.ToString("yyyy-MM-dd"),
-                   RandevuSaati = r.RandevuTarihi.ToString("HH:mm"),
-                   RandevuDurumu = r.Durum
-               })
-               .ToList();
+            var randevu = await _context.Randevular
+                .Include(r => r.Musteri)
+                .FirstOrDefaultAsync(r => r.ID == id);
+
             if (randevu == null)
-            {
-                return NotFound();
-            }
+                return NotFound("Randevu bulunamadı.");
 
             return View(randevu);
         }
 
         [HttpPost, ActionName("Sil")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> SilOnayla(int id)
         {
             var randevu = await _context.Randevular.FindAsync(id);
+
+            if (randevu == null)
+                return NotFound("Randevu bulunamadı.");
+
             _context.Randevular.Remove(randevu);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
 
+            return RedirectToAction(nameof(Listele));
+        }
         private bool RandevuExists(int id)
         {
             return _context.Randevular.Any(e => e.ID == id);
