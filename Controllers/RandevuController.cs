@@ -50,7 +50,7 @@ namespace Proje.Controllers
             if (ModelState.IsValid)
             {
                 var uzmanlik = await _context.UzmanlikAlanlari
-    .FirstOrDefaultAsync(u => u.ID == randevu.UzmanlikID);
+                .FirstOrDefaultAsync(u => u.ID == randevu.UzmanlikID);
                 if (uzmanlik == null)
                 {
                     ModelState.AddModelError("", "Geçersiz uzmanlık alanı seçildi.");
@@ -143,7 +143,5 @@ namespace Proje.Controllers
             return RedirectToAction("AdminRandevular");
         }
 
-
     }
-
 }
