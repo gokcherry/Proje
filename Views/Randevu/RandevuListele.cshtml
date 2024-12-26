@@ -1,0 +1,29 @@
+﻿@model IEnumerable<Proje.Models.Randevu>
+
+<h2>Randevularım</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Uzmanlık Alanı</th>
+            <th>Çalışan</th>
+            <th>Tarih</th>
+            <th>Durum</th>
+            <th>İşlem</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var randevu in Model)
+        {
+            <tr>
+                <td>@randevu.Uzmanlik.Ad</td>
+                <td>@randevu.Calisan.Ad</td>
+                <td>@randevu.RandevuTarihi.ToString("g")</td>
+                <td>@randevu.Durum</td>
+                <td>
+                    <a href="@Url.Action("IptalEt", "Randevu", new { id = randevu.ID })" class="btn btn-danger">İptal Et</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
