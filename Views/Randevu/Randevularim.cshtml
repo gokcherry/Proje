@@ -1,0 +1,41 @@
+﻿<h2>Randevularım</h2>
+@if (Model != null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Tarih</th>
+                <th>Saat</th>
+                <th>Uzmanlık</th>
+                <th>Çalışan</th>
+                <th>Fiyat</th>
+                <th>Durum</th>
+                <th>İşlemler</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var randevu in Model)
+            {
+                <tr>
+                    <td>@randevu.RandevuTarihi.ToShortDateString()</td>
+                    <td>@randevu.RandevuTarihi.ToShortTimeString()</td>
+                    <td>@randevu.UzmanlikAdi</td>
+                    <td>@randevu.CalisanAdi</td>
+                    <td>@randevu.ToplamFiyat.ToString("C")</td>
+                    <td>@randevu.Durum</td>
+                    <td>
+                        <form asp-controller="Randevu" asp-action="RandevuSil" method="post" onsubmit="return confirm('Bu randevuyu silmek istediğinize emin misiniz?');">
+                            <input type="hidden" name="randevuId" value="@randevu.ID" />
+                            <button type="submit" class="btn btn-danger btn-sm">Sil</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>Henüz bir randevunuz bulunmamaktadır.</p>
+}
+

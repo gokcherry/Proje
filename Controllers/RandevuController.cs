@@ -122,7 +122,7 @@ namespace Proje.Controllers
                     _context.Randevular.Add(yeniRandevu);
                     await _context.SaveChangesAsync();
                     TempData["Message"] = "Randevunuz başarıyla oluşturuldu!";
-                    return RedirectToAction("RandevuListele");
+                    return RedirectToAction("Randevularim");
                 }
                 catch (Exception ex)
                 {
@@ -139,20 +139,70 @@ namespace Proje.Controllers
             return View();
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> IptalEt(int id)
+        public async Task<IActionResult> Randevularim()
         {
-            var userId = User.Identity.Name;
-            var randevu = await _context.Randevular.FirstOrDefaultAsync(r => r.ID == id && r.MusteriID == userId);
-            if (randevu == null)
+            var userId = User.Identity?.Name; // Giriş yapan kullanıcının kullanıcı adı
+            var kullaniciId = _context.Users
+                .Where(u => u.UserName == userId)
+                .Select(u => u.Id)
+                .FirstOrDefault();
+
+            if (string.IsNullOrEmpty(kullaniciId))
             {
-                return NotFound();
+                TempData["Error"] = "Geçersiz kullanıcı kimliği.";
+                return RedirectToAction("Index", "Home");
             }
 
+            var randevular = await _context.Randevular
+                .Include(r => r.Calisan) // Çalışan bilgisi
+                .Include(r => r.Uzmanlik) // Uzmanlık bilgisi
+                .Where(r => r.MusteriID == kullaniciId)
+                .Select(r => new
+                {
+                    r.ID,
+                    RandevuTarihi = r.RandevuTarihi,
+                    UzmanlikAdi = r.Uzmanlik.Ad,
+                    CalisanAdi = r.Calisan.Ad,
+                    r.ToplamFiyat,
+                    r.Durum
+                })
+                .ToListAsync();
+
+            return View(randevular);
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RandevuSil(int id)
+        {
+            var userId = User.Identity?.Name;
+            var kullaniciId = _context.Users.Where(u => u.UserName == userId).Select(u => u.Id).FirstOrDefault();
+
+            if (string.IsNullOrEmpty(kullaniciId))
+            {
+                ModelState.AddModelError("", "Geçersiz kullanıcı kimliği.");
+                return RedirectToAction("Randevularim");
+            }
+
+            var randevu = await _context.Randevular
+                .FirstOrDefaultAsync(r => r.ID == id && r.MusteriID == kullaniciId);
+
+            if (randevu == null)
+            {
+                // Eğer randevu bulunamazsa kullanıcıyı bilgilendiriyoruz
+                TempData["ErrorMessage"] = "Randevu bulunamadı veya silme işlemi yapılamaz.";
+                return RedirectToAction("Randevularim");
+            }
+
+            // Randevuyu siliyoruz
             _context.Randevular.Remove(randevu);
             await _context.SaveChangesAsync();
-            return RedirectToAction("RandevuListele");
+
+            // Silme işlemi başarılı olduysa kullanıcıya bilgi veriyoruz
+            TempData["Message"] = "Randevunuz başarıyla silindi!";
+            return RedirectToAction("Randevularim");
+
         }
 
         [Authorize(Roles = "Admin")]
