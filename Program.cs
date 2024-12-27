@@ -24,7 +24,12 @@ builder.Services.AddIdentity<Kullanicilar, IdentityRole>(options =>
 .AddDefaultTokenProviders();
 
 builder.Services.AddControllersWithViews();
-builder.Services.AddSession();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 builder.Services.AddRazorPages();
 
 var app = builder.Build();
@@ -74,32 +79,40 @@ app.Run();
 
 static async Task SeedAdminUser(UserManager<Kullanicilar> userManager, RoleManager<IdentityRole> roleManager)
 {
-    if (!await roleManager.RoleExistsAsync("Admin"))
+    try
     {
-        await roleManager.CreateAsync(new IdentityRole("Admin"));
-    }
-    if (!await roleManager.RoleExistsAsync("User"))
-    {
-        await roleManager.CreateAsync(new IdentityRole("User"));
-    }
-
-    string adminEmail = "cerrahyaren@gmail.com";
-    string adminPassword = "Admin123!";
-
-    var adminUser = await userManager.FindByEmailAsync(adminEmail);
-    if (adminUser == null)
-    {
-        var newAdmin = new Kullanicilar
+        if (!await roleManager.RoleExistsAsync("Admin"))
         {
-            UserName = adminEmail,
-            Email = adminEmail,
-            EmailConfirmed = true
-        };
-
-        var result = await userManager.CreateAsync(newAdmin, adminPassword);
-        if (result.Succeeded)
+            await roleManager.CreateAsync(new IdentityRole("Admin"));
+        }
+        if (!await roleManager.RoleExistsAsync("User"))
         {
-            await userManager.AddToRoleAsync(newAdmin, "Admin");
+            await roleManager.CreateAsync(new IdentityRole("User"));
+        }
+
+        string adminEmail = "cerrahyaren@gmail.com";
+        string adminPassword = "Admin123!";
+
+        var adminUser = await userManager.FindByEmailAsync(adminEmail);
+        if (adminUser == null)
+        {
+            var newAdmin = new Kullanicilar
+            {
+                UserName = adminEmail,
+                Email = adminEmail,
+                EmailConfirmed = true
+            };
+
+            var result = await userManager.CreateAsync(newAdmin, adminPassword);
+            if (result.Succeeded)
+            {
+                await userManager.AddToRoleAsync(newAdmin, "Admin");
+            }
         }
     }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error during seeding admin user: {ex.Message}");
+    }
 }
+

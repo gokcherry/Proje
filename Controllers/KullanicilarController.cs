@@ -10,7 +10,6 @@ namespace Proje.Controllers
     public class KullanicilarController : Controller
     {
         private readonly ApplicationDbContext _context;
-
         public KullanicilarController(ApplicationDbContext context)
         {
             _context = context;
@@ -36,44 +35,57 @@ namespace Proje.Controllers
             }
             return View(kullanici);
         }
-        public async Task<IActionResult> Guncelle(int? id)
+        public async Task<IActionResult> Guncelle(string id)
         {
             if (id == null)
-                return NotFound();
+            {
+                return NotFound("Geçersiz ID.");
+            }
 
             var kullanici = await _context.Musteri.FindAsync(id);
             if (kullanici == null)
-                return NotFound();
+            {
+                return NotFound("Kullanıcı bulunamadı.");
+            }
 
             return View(kullanici);
         }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Guncelle(string id, Kullanicilar kullanici)
         {
             if (id != kullanici.Id)
-                return NotFound();
-
-            if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(kullanici);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!_context.Musteri.Any(e => e.Id == id))
-                        return NotFound();
-
-                    throw;
-                }
-                return RedirectToAction(nameof(Listele));
+                return BadRequest("ID uyuşmazlığı.");
             }
-            return View(kullanici);
+
+            var mevcutKullanici = await _context.Musteri.FindAsync(id);
+            if (mevcutKullanici == null)
+            {
+                return NotFound("Kullanıcı bulunamadı.");
+            }
+            mevcutKullanici.Ad = kullanici.Ad;
+            mevcutKullanici.Soyad = kullanici.Soyad;
+            mevcutKullanici.Email = kullanici.Email;
+            mevcutKullanici.Telefon = kullanici.Telefon;
+            try
+            {
+                _context.Update(mevcutKullanici);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!_context.Musteri.Any(e => e.Id == id))
+                {
+                    return NotFound("Kullanıcı veritabanında mevcut değil.");
+                }
+                throw;
+            }
+
+            TempData["Message"] = "Kullanıcı başarıyla güncellendi.";
+            return RedirectToAction(nameof(Listele));
         }
-        public async Task<IActionResult> Sil(int? id)
+        public async Task<IActionResult> Sil(string? id)
         {
             if (id == null)
                 return NotFound();
@@ -86,7 +98,7 @@ namespace Proje.Controllers
         }
         [HttpPost, ActionName("Sil")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SilOnayla(int id)
+        public async Task<IActionResult> SilOnayla(string id)
         {
             var kullanici = await _context.Musteri.FindAsync(id);
             if (kullanici == null)

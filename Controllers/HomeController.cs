@@ -13,12 +13,10 @@ namespace Proje.Controllers
         {
             _logger = logger;
         }
-
         public IActionResult Index()
         {
             return View();
         }
-
         public IActionResult Hakkımızda()
         {
             return View();
@@ -28,7 +26,6 @@ namespace Proje.Controllers
         {
             return View();
         }
-
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

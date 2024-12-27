@@ -22,11 +22,13 @@ namespace Proje.Controllers
         public async Task<IActionResult> RandevuListele()
         {
             var userId = User.Identity.Name;
+
             var randevular = await _context.Randevular
                 .Include(r => r.Uzmanlik)
                 .Include(r => r.Calisan)
                 .Where(r => r.MusteriID == userId)
                 .ToListAsync();
+
             return View(randevular);
         }
 
@@ -35,88 +37,124 @@ namespace Proje.Controllers
         {
             ViewBag.UzmanlikAlanlari = _context.UzmanlikAlanlari.Select(u => new SelectListItem
             {
-                Text = u.Ad,
+                Text = $"{u.Ad} - {u.Fiyat}₺",
                 Value = u.ID.ToString()
-
             }).ToList();
             return View();
         }
 
-            [HttpPost]
+        [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RandevuAl(Randevu randevu, int[] UzmanlikAlanlari)
+        public async Task<IActionResult> RandevuAl(DateTime randevuTarihi, string randevuSaati, int uzmanlikId)
         {
+            var userId = User.Identity?.Name;
+            var kullaniciId = _context.Users.Where(u => u.UserName == userId).Select(u => u.Id).FirstOrDefault();
+
+            if (string.IsNullOrEmpty(kullaniciId))
+            {
+                ModelState.AddModelError("", "Geçersiz kullanıcı kimliği.");
+                ViewBag.UzmanlikAlanlari = _context.UzmanlikAlanlari.Select(u => new SelectListItem
+                {
+                    Text = u.Ad,
+                    Value = u.ID.ToString()
+                }).ToList();
+                return View();
+            }
 
             if (ModelState.IsValid)
             {
-                var uzmanlik = await _context.UzmanlikAlanlari
-                .FirstOrDefaultAsync(u => u.ID == randevu.UzmanlikID);
+                if (!TimeSpan.TryParse(randevuSaati, out var saatDilimi))
+                {
+                    ModelState.AddModelError("", "Geçersiz saat formatı.");
+                    return View();
+                }
+
+                var randevuZamani = randevuTarihi.Date.Add(saatDilimi);
+
+                if (randevuZamani <= DateTime.Now)
+                {
+                    ModelState.AddModelError("", "Geçmiş bir tarihe randevu oluşturamazsınız. Lütfen ileri bir tarih ve saat seçin.");
+                    return View();
+                }
+
+                var uzmanlik = await _context.UzmanlikAlanlari.FirstOrDefaultAsync(u => u.ID == uzmanlikId);
                 if (uzmanlik == null)
                 {
                     ModelState.AddModelError("", "Geçersiz uzmanlık alanı seçildi.");
-                    return View(randevu);
+                    return View();
                 }
+
+                var toplamFiyat = uzmanlik.Fiyat;
+
                 var calisan = await _context.CalisanUzmanlik
-                    .FirstOrDefaultAsync(c => c.CalisanID == randevu.UzmanlikID);
+                    .Include(cu => cu.Calisan)
+                    .Where(cu => cu.UzmanlikID == uzmanlikId)
+                    .Select(cu => cu.Calisan)
+                    .FirstOrDefaultAsync();
                 if (calisan == null)
                 {
                     ModelState.AddModelError("", "Bu uzmanlık alanına atanmış bir çalışan bulunmamaktadır.");
-                    return View(randevu);
+                    return View();
                 }
 
-                randevu.CalisanID = calisan.ID;
-
-                // Çakışma kontrolü
                 var mevcutRandevular = _context.Randevular
-                    .Where(r => r.CalisanID == randevu.CalisanID &&
-                                r.RandevuTarihi.Date == randevu.RandevuTarihi.Date)
+                    .Where(r => r.CalisanID == calisan.ID && r.RandevuTarihi.Date == randevuTarihi.Date)
                     .ToList();
 
-                var yeniRandevuBaslangic = randevu.RandevuTarihi;
-                var yeniRandevuBitis = randevu.RandevuTarihi.AddMinutes(uzmanlik.Sure);
-
-                if (mevcutRandevular.Any(r =>
-                    (yeniRandevuBaslangic >= r.RandevuTarihi && yeniRandevuBaslangic < r.RandevuTarihi.AddMinutes(uzmanlik.Sure)) ||
-                    (yeniRandevuBitis > r.RandevuTarihi && yeniRandevuBitis <= r.RandevuTarihi.AddMinutes(uzmanlik.Sure))))
+                if (mevcutRandevular.Any(r => r.RandevuTarihi.TimeOfDay == saatDilimi))
                 {
                     ModelState.AddModelError("", "Seçilen saat dolu. Lütfen başka bir saat seçin.");
-                    return View(randevu);
+                    return View();
                 }
 
-                randevu.MusteriID = User.Identity.Name;
-                randevu.Durum = "Onay Bekliyor";
+                var yeniRandevu = new Randevu
+                {
+                    MusteriID = kullaniciId,
+                    CalisanID = calisan.ID,
+                    UzmanlikID = uzmanlikId,
+                    RandevuTarihi = randevuZamani,
+                    ToplamFiyat = toplamFiyat,
+                    Durum = "Onay Bekliyor"
+                };
 
-                _context.Randevular.Add(randevu);
-                await _context.SaveChangesAsync();
-
-                return RedirectToAction("RandevuAl");
+                try
+                {
+                    _context.Randevular.Add(yeniRandevu);
+                    await _context.SaveChangesAsync();
+                    TempData["Message"] = "Randevunuz başarıyla oluşturuldu!";
+                    return RedirectToAction("RandevuListele");
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", $"Randevu oluşturulurken bir hata oluştu: {ex.InnerException?.Message ?? ex.Message}");
+                    return View();
+                }
             }
+
             ViewBag.UzmanlikAlanlari = _context.UzmanlikAlanlari.Select(u => new SelectListItem
             {
                 Text = u.Ad,
                 Value = u.ID.ToString()
-
             }).ToList();
-            return View(randevu);
+            return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> IptalEt(int id)
         {
-            var randevu = await _context.Randevular.FindAsync(id);
-            if (randevu == null || randevu.MusteriID != User.Identity.Name)
+            var userId = User.Identity.Name;
+            var randevu = await _context.Randevular.FirstOrDefaultAsync(r => r.ID == id && r.MusteriID == userId);
+            if (randevu == null)
             {
                 return NotFound();
             }
 
             _context.Randevular.Remove(randevu);
             await _context.SaveChangesAsync();
-            return RedirectToAction("RandevuAl");
-
+            return RedirectToAction("RandevuListele");
         }
 
-        // Admin için Randevu Yönetimi
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AdminRandevular()
         {
@@ -142,6 +180,5 @@ namespace Proje.Controllers
 
             return RedirectToAction("AdminRandevular");
         }
-
     }
 }

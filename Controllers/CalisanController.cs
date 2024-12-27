@@ -13,12 +13,10 @@ namespace Proje.Controllers
     public class CalisanController : Controller
     {
         private readonly ApplicationDbContext _context;
-
         public CalisanController(ApplicationDbContext context)
         {
             _context = context;
         }
-
         public IActionResult Hata(string mesaj)
         {
             ViewData["HataMesaji"] = mesaj;
@@ -37,7 +35,7 @@ namespace Proje.Controllers
         public async Task<IActionResult> Detay(int? id)
         {
             if (id == null)
-                return NotFound();
+                return BadRequest("Geçersiz çalışan ID.");
 
             var calisan = await _context.Calisan
                 .Include(c => c.UzmanlikAlanlari)
@@ -45,64 +43,69 @@ namespace Proje.Controllers
                 .FirstOrDefaultAsync(m => m.ID == id);
 
             if (calisan == null)
-                return NotFound();
+                return NotFound("Çalışan bulunamadı.");
 
             return View(calisan);
         }
         public IActionResult Ekle()
         {
-            ViewData["UzmanlikAlanlari"] = new SelectList(_context.UzmanlikAlanlari, "ID", "Ad");
+            ViewData["UzmanlikAlanlari"] = new MultiSelectList(_context.UzmanlikAlanlari, "ID", "Ad");
             return View();
         }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Ekle([Bind("Ad,Soyad,Email,Telefon")] Calisanlar calisan, int[] UzmanlikAlanlari)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(calisan);
-                await _context.SaveChangesAsync();
-
-                foreach (var uzmanlikId in UzmanlikAlanlari)
+                try
                 {
-                    var calisanUzmanlik = new CalisanUzmanlik
+                    _context.Add(calisan);
+                    await _context.SaveChangesAsync();
+
+                    foreach (var uzmanlikId in UzmanlikAlanlari)
                     {
-                        CalisanID = calisan.ID,
-                        UzmanlikID = uzmanlikId
-                    };
-                    _context.Add(calisanUzmanlik);
+                        var calisanUzmanlik = new CalisanUzmanlik
+                        {
+                            CalisanID = calisan.ID,
+                            UzmanlikID = uzmanlikId
+                        };
+                        _context.Add(calisanUzmanlik);
+                    }
+
+                    await _context.SaveChangesAsync();
+                    TempData["msj"] = "Çalışan başarıyla eklendi.";
+                    return RedirectToAction(nameof(Listele));
                 }
-                await _context.SaveChangesAsync();
-
-                return RedirectToAction(nameof(Listele));
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", $"Ekleme sırasında bir hata oluştu: {ex.Message}");
+                }
             }
-
-            ViewData["UzmanlikAlanlari"] = new SelectList(_context.UzmanlikAlanlari, "ID", "Ad");
+            ViewData["UzmanlikAlanlari"] = new MultiSelectList(_context.UzmanlikAlanlari, "ID", "Ad");
             return View(calisan);
         }
         public async Task<IActionResult> Guncelle(int? id)
         {
             if (id == null)
-                return NotFound();
+                return BadRequest("Geçersiz çalışan ID.");
 
             var calisan = await _context.Calisan
                 .Include(c => c.UzmanlikAlanlari)
                 .FirstOrDefaultAsync(c => c.ID == id);
 
             if (calisan == null)
-                return NotFound();
+                return NotFound("Çalışan bulunamadı.");
 
-            ViewData["UzmanlikAlanlari"] = new SelectList(_context.UzmanlikAlanlari, "ID", "Ad");
+            ViewData["UzmanlikAlanlari"] = new MultiSelectList(_context.UzmanlikAlanlari, "ID", "Ad");
             return View(calisan);
         }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Guncelle(int id, [Bind("ID,Ad,Soyad,Email,Telefon")] Calisanlar calisan, int[] UzmanlikAlanlari)
         {
             if (id != calisan.ID)
-                return NotFound();
+                return BadRequest("ID uyuşmazlığı.");
 
             if (ModelState.IsValid)
             {
@@ -124,49 +127,67 @@ namespace Proje.Controllers
                         };
                         _context.Add(calisanUzmanlik);
                     }
+
                     await _context.SaveChangesAsync();
+                    TempData["msj"] = "Çalışan başarıyla güncellendi.";
+                    return RedirectToAction(nameof(Listele));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!CalisanVarMi(calisan.ID))
-                        return NotFound();
+                        return NotFound("Çalışan bulunamadı.");
                     throw;
                 }
-                return RedirectToAction(nameof(Listele));
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", $"Güncelleme sırasında bir hata oluştu: {ex.Message}");
+                }
             }
-
-            ViewData["UzmanlikAlanlari"] = new SelectList(_context.UzmanlikAlanlari, "ID", "Ad");
+            ViewData["UzmanlikAlanlari"] = new MultiSelectList(_context.UzmanlikAlanlari, "ID", "Ad");
             return View(calisan);
         }
-
+        [HttpGet]
         public IActionResult Sil(int? id)
         {
             if (id == null)
             {
-                TempData["hata"] = "Silme işlemini gerçekleştirmek için ID gerekli. Boş geçmeyiniz.";
-                return RedirectToAction("Hata", new { mesaj = "ID gerekli." });
+                return BadRequest("Geçersiz ID.");
             }
 
             var calisan = _context.Calisan
                 .Include(c => c.UzmanlikAlanlari)
-                .Include(c => c.Randevular)
+                .ThenInclude(ua => ua.Uzmanlik)
                 .FirstOrDefault(c => c.ID == id);
 
             if (calisan == null)
             {
-                TempData["hata"] = "Silinmek istenen çalışan sistemde mevcut değil.";
-                return RedirectToAction("Hata", new { mesaj = "Çalışan bulunamadı." });
+                return NotFound("Çalışan bulunamadı.");
             }
 
+            return View(calisan);
+        }
+        [HttpPost]
+        public IActionResult Sil(int id)
+        {
+            var calisan = _context.Calisan
+                .Include(c => c.UzmanlikAlanlari)
+                .FirstOrDefault(c => c.ID == id);
+
+            if (calisan == null)
+            {
+                return NotFound("Çalışan bulunamadı.");
+            }
             if (calisan.Randevular != null && calisan.Randevular.Any())
             {
-                TempData["hata"] = "Çalışanın randevuları mevcut. Silmeden önce ilişkili randevuları kaldırmanız gerekir.";
-                return RedirectToAction("Hata", new { mesaj = "Çalışanın randevuları mevcut." });
+                TempData["Hata"] = "Çalışanın aktif randevuları var. Önce randevuları kaldırın.";
+                return RedirectToAction("Sil", new { id });
             }
 
+            // Çalışanın uzmanlık alanlarını sil
             var uzmanliklar = _context.CalisanUzmanlik.Where(cu => cu.CalisanID == calisan.ID);
             _context.CalisanUzmanlik.RemoveRange(uzmanliklar);
 
+            // Çalışanı sil
             _context.Calisan.Remove(calisan);
             _context.SaveChanges();
 

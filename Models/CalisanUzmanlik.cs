@@ -17,7 +17,6 @@ namespace Proje.Models
         [ForeignKey("Uzmanlik")]
         [Range(1, int.MaxValue, ErrorMessage = "Geçerli bir uzmanlık ID giriniz.")]
         public int UzmanlikID { get; set; }
-
         public virtual Calisanlar Calisan { get; set; }
         public virtual UzmanlikAlanlari Uzmanlik { get; set; }
     }

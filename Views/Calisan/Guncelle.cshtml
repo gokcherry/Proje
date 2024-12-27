@@ -4,25 +4,29 @@
     ViewData["Title"] = "Çalışan Güncelle";
 }
 
-<h1>Çalışan Bilgilerini Güncelle</h1>
+<h1>Çalışan Güncelle</h1>
 
-<form asp-action="Guncelle" method="post">
+<form asp-action="Guncelle">
     <input type="hidden" asp-for="ID" />
+
     <div class="form-group">
         <label asp-for="Ad" class="control-label"></label>
         <input asp-for="Ad" class="form-control" />
         <span asp-validation-for="Ad" class="text-danger"></span>
     </div>
+
     <div class="form-group">
         <label asp-for="Soyad" class="control-label"></label>
         <input asp-for="Soyad" class="form-control" />
         <span asp-validation-for="Soyad" class="text-danger"></span>
     </div>
+
     <div class="form-group">
         <label asp-for="Email" class="control-label"></label>
         <input asp-for="Email" class="form-control" />
         <span asp-validation-for="Email" class="text-danger"></span>
     </div>
+
     <div class="form-group">
         <label asp-for="Telefon" class="control-label"></label>
         <input asp-for="Telefon" class="form-control" />
@@ -31,19 +35,8 @@
     <div class="form-group">
         <label>Uzmanlık Alanları</label>
         <select asp-items="ViewBag.UzmanlikAlanlari" class="form-control" multiple="multiple" name="UzmanlikAlanlari">
-            @if (ViewBag.SelectedUzmanlikAlanlari != null)
-            {
-                foreach (var item in ViewBag.UzmanlikAlanlari)
-                {
-                    <option value="@item.Value" selected="@ViewBag.SelectedUzmanlikAlanlari.Contains(item.Value)">@item.Text</option>
-                }
-            }
         </select>
     </div>
     <button type="submit" class="btn btn-primary">Kaydet</button>
-    <a asp-action="Listele" class="btn btn-secondary">İptal Et</a>
+    <a asp-action="Listele" class="btn btn-secondary">İptal</a>
 </form>
-
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}

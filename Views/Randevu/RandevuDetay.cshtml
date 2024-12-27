@@ -1,0 +1,21 @@
+﻿@model Proje.Models.Randevu
+
+@{
+    ViewData["Title"] = "Randevu Detayları";
+}
+
+<h2 class="text-center mt-4">Randevu Detayları</h2>
+
+<div class="card mt-4">
+    <div class="card-body">
+        <h5 class="card-title">Randevu Bilgileri</h5>
+        <p><strong>Uzmanlık:</strong> @Model.Uzmanlik?.Ad</p>
+        <p><strong>Çalışan:</strong> @Model.Calisan?.Ad</p>
+        <p><strong>Tarih:</strong> @Model.RandevuTarihi.ToString("yyyy-MM-dd HH:mm")</p>
+        <p><strong>Durum:</strong> @Model.Durum</p>
+    </div>
+</div>
+
+<div class="mt-4">
+    <a asp-action="RandevuListele" class="btn btn-secondary">Geri Dön</a>
+</div>

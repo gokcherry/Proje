@@ -6,6 +6,13 @@
 <div class="container mt-4">
     <h2 class="text-center mb-4">Müşteri Güncelle</h2>
 
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["Message"]
+        </div>
+    }
+
     <form asp-action="Guncelle" method="post">
         <input type="hidden" asp-for="Id" />
 

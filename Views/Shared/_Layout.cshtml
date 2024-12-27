@@ -4,12 +4,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Proje</title>
-
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
 <body>
     <header>
+        <!-- Navbar kısmı -->
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-light border-bottom box-shadow mb-3">
             <div class="container">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Proje</a>
@@ -25,7 +25,7 @@
                             @if (User.IsInRole("Admin"))
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Randevu" asp-action="Listele">Randevular</a>
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Randevu" asp-action="AdminRandevular">Randevular</a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Calisan" asp-action="Listele">Çalışanlar</a>
@@ -34,8 +34,9 @@
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Kullanicilar" asp-action="Listele">Müşteriler</a>
                                 </li>
                             }
-                            else
+                            else if (User.IsInRole("User"))
                             {
+                                <!-- User'a özel linkler -->
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Anasayfa</a>
                                 </li>
@@ -56,12 +57,11 @@
             </div>
         </nav>
     </header>
-        <div class="container">
+    <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
-
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

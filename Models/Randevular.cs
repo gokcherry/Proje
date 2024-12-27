@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Proje.Models
 {
-    public class Randevu
+    public class Randevu        
     {
         [Key]
         public int ID { get; set; }
@@ -35,7 +35,6 @@ namespace Proje.Models
         [StringLength(20, ErrorMessage = "Durum en fazla 20 karakter olabilir.")]
         public string Durum { get; set; }
         public Kullanicilar Musteri { get; set; }
-
         public virtual Calisanlar Calisan { get; set; }
         public virtual UzmanlikAlanlari Uzmanlik { get; set; }  
     }

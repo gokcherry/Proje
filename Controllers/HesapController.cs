@@ -107,21 +107,31 @@ namespace Proje.Controllers
             {
                 var user = new Kullanicilar
                 {
-                    Ad = model.Ad,
-                    Soyad = model.Soyad,
-                    Telefon = model.Telefon,
+                    UserName = model.Email,
                     Email = model.Email,
-                    UserName = model.Email
+                    Telefon = model.Telefon,
+                    Ad = model.Ad,
+                    Soyad = model.Soyad
                 };
 
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+                    // Add user to "User" role
+                    var roleResult = await _userManager.AddToRoleAsync(user, "User");
+                    if (!roleResult.Succeeded)
+                    {
+                        foreach (var error in roleResult.Errors)
+                        {
+                            ModelState.AddModelError(string.Empty, $"Role Error: {error.Description}");
+                        }
+                        return View(model);
+                    }
+
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     return RedirectToAction("Index", "Home");
                 }
 
-                // Handle errors
                 foreach (var error in result.Errors)
                 {
                     ModelState.AddModelError(string.Empty, error.Description);
@@ -130,5 +140,6 @@ namespace Proje.Controllers
 
             return View(model);
         }
+
     }
 }

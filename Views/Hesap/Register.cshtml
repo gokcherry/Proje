@@ -8,47 +8,56 @@
 <div class="container d-flex justify-content-center align-items-center vh-100">
     <div class="card shadow-lg" style="width: 500px; padding: 30px; border-radius: 10px;">
         <h2 class="text-center mb-4">Üye Ol</h2>
-        <form asp-action="Register" method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger mb-4"></div>
+        <form asp-action="Register" method="post" novalidate>
+            <!-- Model Hataları -->
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-4" role="alert"></div>
 
+            <!-- Ad -->
             <div class="form-group mb-3">
                 <label asp-for="Ad" class="form-label">Ad</label>
                 <input asp-for="Ad" class="form-control" placeholder="Adınızı girin" />
                 <span asp-validation-for="Ad" class="text-danger"></span>
             </div>
 
+            <!-- Soyad -->
             <div class="form-group mb-3">
                 <label asp-for="Soyad" class="form-label">Soyad</label>
                 <input asp-for="Soyad" class="form-control" placeholder="Soyadınızı girin" />
                 <span asp-validation-for="Soyad" class="text-danger"></span>
             </div>
 
+            <!-- Telefon -->
             <div class="form-group mb-3">
                 <label asp-for="Telefon" class="form-label">Telefon</label>
-                <input asp-for="Telefon" class="form-control" placeholder="Telefon numaranızı girin" />
+                <input asp-for="Telefon" class="form-control" type="tel" placeholder="Telefon numaranızı girin" />
                 <span asp-validation-for="Telefon" class="text-danger"></span>
             </div>
 
+            <!-- E-posta -->
             <div class="form-group mb-3">
                 <label asp-for="Email" class="form-label">E-posta</label>
-                <input asp-for="Email" class="form-control" placeholder="E-posta adresinizi girin" />
+                <input asp-for="Email" class="form-control" type="email" placeholder="E-posta adresinizi girin" />
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
 
+            <!-- Şifre -->
             <div class="form-group mb-3">
                 <label asp-for="Password" class="form-label">Şifre</label>
                 <input asp-for="Password" class="form-control" type="password" placeholder="Şifrenizi girin" />
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
 
+            <!-- Şifre Tekrar -->
             <div class="form-group mb-3">
                 <label asp-for="ConfirmPassword" class="form-label">Şifre Tekrar</label>
                 <input asp-for="ConfirmPassword" class="form-control" type="password" placeholder="Şifrenizi tekrar girin" />
                 <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
             </div>
 
+            <!-- Üye Ol Butonu -->
             <button type="submit" class="btn btn-primary w-100 p-2">Üye Ol</button>
 
+            <!-- Zaten hesabınız var mı -->
             <p class="text-center mt-3">
                 Zaten bir hesabınız var mı? <a asp-action="Login" class="text-decoration-none">Giriş Yap</a>
             </p>

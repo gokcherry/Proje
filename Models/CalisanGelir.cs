@@ -20,7 +20,6 @@ namespace Proje.Models
         [Required(ErrorMessage = "Toplam gelir alanı zorunludur.")]
         [Range(0, double.MaxValue, ErrorMessage = "Toplam gelir negatif olamaz.")]
         public decimal ToplamGelir { get; set; }
-
         public virtual Calisanlar Calisan { get; set; }
     }
 }
