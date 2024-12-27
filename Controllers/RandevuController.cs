@@ -104,6 +104,7 @@ namespace Proje.Controllers
                 if (mevcutRandevular.Any(r => r.RandevuTarihi.TimeOfDay == saatDilimi))
                 {
                     ModelState.AddModelError("", "Seçilen saat dolu. Lütfen başka bir saat seçin.");
+                    TempData["ErrorMessage"]= "Seçilen saat dolu. Lütfen başka bir saat seçin.";
                     return View();
                 }
 
@@ -176,32 +177,58 @@ namespace Proje.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RandevuSil(int id)
         {
-            var userId = User.Identity?.Name;
-            var kullaniciId = _context.Users.Where(u => u.UserName == userId).Select(u => u.Id).FirstOrDefault();
-
-            if (string.IsNullOrEmpty(kullaniciId))
+            try
             {
-                ModelState.AddModelError("", "Geçersiz kullanıcı kimliği.");
+                Console.WriteLine($"Silme işlemi başladı. Gelen ID: {id}");
+
+                if (id <= 0)
+                {
+                    Console.WriteLine("Geçersiz ID.");
+                    TempData["ErrorMessage"] = "Geçersiz randevu ID.";
+                    return RedirectToAction("Randevularim");
+                }
+
+                var userId = User.Identity?.Name;
+                Console.WriteLine($"Giriş yapan kullanıcı: {userId}");
+
+                var kullaniciId = _context.Users
+                    .Where(u => u.UserName == userId)
+                    .Select(u => u.Id)
+                    .FirstOrDefault();
+
+                if (string.IsNullOrEmpty(kullaniciId))
+                {
+                    Console.WriteLine("Kullanıcı kimliği alınamadı.");
+                    TempData["ErrorMessage"] = "Geçersiz kullanıcı kimliği.";
+                    return RedirectToAction("Randevularim");
+                }
+
+                Console.WriteLine($"Kullanıcı ID: {kullaniciId}");
+
+                var randevu = await _context.Randevular
+                    .FirstOrDefaultAsync(r => r.ID == id && r.MusteriID == kullaniciId);
+
+                if (randevu == null)
+                {
+                    Console.WriteLine("Randevu bulunamadı.");
+                    TempData["ErrorMessage"] = "Silinmek istenen randevu bulunamadı.";
+                    return RedirectToAction("Randevularim");
+                }
+
+                Console.WriteLine("Randevu bulundu, siliniyor...");
+                _context.Randevular.Remove(randevu);
+                await _context.SaveChangesAsync();
+                Console.WriteLine("Randevu başarıyla silindi.");
+
+                TempData["Message"] = "Randevunuz başarıyla silindi.";
                 return RedirectToAction("Randevularim");
             }
-
-            var randevu = await _context.Randevular
-                .FirstOrDefaultAsync(r => r.ID == id && r.MusteriID == kullaniciId);
-
-            if (randevu == null)
+            catch (Exception ex)
             {
-                // Eğer randevu bulunamazsa kullanıcıyı bilgilendiriyoruz
-                TempData["ErrorMessage"] = "Randevu bulunamadı veya silme işlemi yapılamaz.";
+                Console.WriteLine($"Hata oluştu: {ex.Message}");
+                TempData["ErrorMessage"] = "Bir hata oluştu.";
                 return RedirectToAction("Randevularim");
             }
-
-            // Randevuyu siliyoruz
-            _context.Randevular.Remove(randevu);
-            await _context.SaveChangesAsync();
-
-            // Silme işlemi başarılı olduysa kullanıcıya bilgi veriyoruz
-            TempData["Message"] = "Randevunuz başarıyla silindi!";
-            return RedirectToAction("Randevularim");
 
         }
 
