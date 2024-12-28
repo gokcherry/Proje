@@ -257,5 +257,24 @@ namespace Proje.Controllers
 
             return RedirectToAction("AdminRandevular");
         }
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        public async Task<IActionResult> Reddet(int id)
+        {
+             var randevu = await _context.Randevular.FindAsync(id);
+  
+            if (randevu == null)
+            {
+                TempData["ErrorMessage"] = "Randevu bulunamadı.";
+                return RedirectToAction("AdminRandevular");
+            }
+
+            randevu.Durum = "Reddedildi";
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Randevu başarıyla reddedildi.";
+            return RedirectToAction("AdminRandevular");
+        }
+
     }
 }

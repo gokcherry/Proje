@@ -4,39 +4,109 @@
     ViewData["Title"] = "Çalışan Güncelle";
 }
 
-<h1>Çalışan Güncelle</h1>
+<style>
+    .form-container {
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        max-width: 600px;
+        margin: 50px auto;
+    }
 
-<form asp-action="Guncelle">
-    <input type="hidden" asp-for="ID" />
+    h1 {
+        color: #5a5a5a;
+        text-align: center;
+        margin-bottom: 20px;
+    }
 
-    <div class="form-group">
-        <label asp-for="Ad" class="control-label"></label>
-        <input asp-for="Ad" class="form-control" />
-        <span asp-validation-for="Ad" class="text-danger"></span>
-    </div>
+    label {
+        color: #5a5a5a;
+    }
 
-    <div class="form-group">
-        <label asp-for="Soyad" class="control-label"></label>
-        <input asp-for="Soyad" class="form-control" />
-        <span asp-validation-for="Soyad" class="text-danger"></span>
-    </div>
+    .form-control {
+        border: 1px solid #dcdcdc;
+        border-radius: 5px;
+    }
 
-    <div class="form-group">
-        <label asp-for="Email" class="control-label"></label>
-        <input asp-for="Email" class="form-control" />
-        <span asp-validation-for="Email" class="text-danger"></span>
-    </div>
+        .form-control:focus {
+            border-color: #a9a9a9;
+            box-shadow: 0 0 5px rgba(169, 169, 169, 0.5);
+        }
 
-    <div class="form-group">
-        <label asp-for="Telefon" class="control-label"></label>
-        <input asp-for="Telefon" class="form-control" />
-        <span asp-validation-for="Telefon" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label>Uzmanlık Alanları</label>
-        <select asp-items="ViewBag.UzmanlikAlanlari" class="form-control" multiple="multiple" name="UzmanlikAlanlari">
-        </select>
-    </div>
-    <button type="submit" class="btn btn-primary">Kaydet</button>
-    <a asp-action="Listele" class="btn btn-secondary">İptal</a>
-</form>
+    .btn {
+        border: none;
+        border-radius: 5px;
+        padding: 10px 20px;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-primary {
+        background-color: #dcdcdc;
+        color: #333333;
+    }
+
+        .btn-primary:hover {
+            background-color: #bcbcbc;
+        }
+
+    .btn-secondary {
+        background-color: #f0f0f0;
+        color: #333333;
+        text-decoration: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        display: inline-block;
+        transition: background-color 0.3s ease;
+    }
+
+        .btn-secondary:hover {
+            background-color: #dcdcdc;
+        }
+
+    .text-danger {
+        color: #a94442;
+    }
+</style>
+
+<div class="form-container">
+    <h1>Çalışan Güncelle</h1>
+
+    <form asp-action="Guncelle">
+        <input type="hidden" asp-for="ID" />
+
+        <div class="form-group mb-3">
+            <label asp-for="Ad" class="control-label"></label>
+            <input asp-for="Ad" class="form-control" />
+            <span asp-validation-for="Ad" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="Soyad" class="control-label"></label>
+            <input asp-for="Soyad" class="form-control" />
+            <span asp-validation-for="Soyad" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="Email" class="control-label"></label>
+            <input asp-for="Email" class="form-control" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="Telefon" class="control-label"></label>
+            <input asp-for="Telefon" class="form-control" />
+            <span asp-validation-for="Telefon" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label>Uzmanlık Alanları</label>
+            <select asp-items="ViewBag.UzmanlikAlanlari" class="form-control" multiple="multiple" name="UzmanlikAlanlari"></select>
+        </div>
+
+        <div class="d-flex justify-content-between">
+            <button type="submit" class="btn btn-primary">Kaydet</button>
+            <a asp-action="Listele" class="btn btn-secondary">İptal</a>
+        </div>
+    </form>
+</div>

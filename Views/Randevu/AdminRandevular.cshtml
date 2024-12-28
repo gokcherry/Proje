@@ -38,14 +38,12 @@
                 <td>
                     @if (randevu.Durum == "Onay Bekliyor")
                     {
-                        <form asp-action="Onayla" method="post" style="display:inline;">
-                            <input type="hidden" name="id" value="@randevu.ID" />
-                            <button type="submit" class="btn btn-success btn-sm">Onayla</button>
-                        </form>
-                        <form asp-action="Reddet" method="post" style="display:inline;">
-                            <input type="hidden" name="id" value="@randevu.ID" />
-                            <button type="submit" class="btn btn-danger btn-sm">Reddet</button>
-                        </form>
+                        <div class="d-inline-block">
+                            <form asp-action="Onayla" method="post" class="d-inline">
+                                <input type="hidden" name="id" value="@randevu.ID" />
+                                <button type="submit" class="btn btn-success btn-sm">Onayla</button>
+                            </form>
+                        </div>
                     }
                     else
                     {

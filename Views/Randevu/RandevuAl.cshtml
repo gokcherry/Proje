@@ -4,44 +4,93 @@
     ViewData["Title"] = "Randevu Al";
 }
 
-<h2 class="text-center mt-4">Randevu Al</h2>
+<style>
 
-@if (TempData["Message"] != null)
-{
-    <div class="alert alert-success">
-        @TempData["Message"]
-    </div>
-}
+    .form-container {
+        background-color: #ffffff; /* Beyaz arka plan */
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Hafif gölge */
+        max-width: 500px;
+        margin: 50px auto;
+    }
 
-<form asp-action="RandevuAl" method="post">
-    <div class="form-group">
-        <label for="uzmanlikId">Uzmanlık Alanı</label>
-        <select class="form-control" id="uzmanlikId" name="uzmanlikId">
-            @if (ViewBag.UzmanlikAlanlari != null)
-            {
-                foreach (var uzmanlik in ViewBag.UzmanlikAlanlari)
+    h2 {
+        color: #5a5a5a; /* Başlık için koyu gri */
+    }
+
+    label {
+        color: #5a5a5a; /* Etiketler için koyu gri */
+    }
+
+    .form-control {
+        border: 1px solid #dcdcdc; /* Açık gri kenarlık */
+        border-radius: 5px;
+    }
+
+        .form-control:focus {
+            border-color: #a9a9a9; /* Odakta açık gri kenarlık */
+            box-shadow: 0 0 5px rgba(169, 169, 169, 0.5); /* Odakta hafif gri parlama */
+        }
+
+    .btn {
+        background-color: #dcdcdc; /* Açık gri buton */
+        color: #333333; /* Yazılar için koyu gri */
+        border: none;
+        border-radius: 5px;
+        padding: 10px 20px;
+        transition: background-color 0.3s ease;
+    }
+
+        .btn:hover {
+            background-color: #bcbcbc; /* Hover'da koyu gri */
+        }
+
+    .alert {
+        background-color: #f8f9fa; /* Açık gri arka plan */
+        border: 1px solid #dcdcdc;
+        color: #5a5a5a; /* Yazılar için koyu gri */
+    }
+</style>
+
+<div class="form-container">
+    <h2 class="text-center mt-4">Randevu Al</h2>
+
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert">
+            @TempData["Message"]
+        </div>
+    }
+
+    <form asp-action="RandevuAl" method="post">
+        <div class="form-group mb-3">
+            <label for="uzmanlikId">Uzmanlık Alanı</label>
+            <select class="form-control" id="uzmanlikId" name="uzmanlikId">
+                @if (ViewBag.UzmanlikAlanlari != null)
                 {
-                    <option value="@uzmanlik.Value">@uzmanlik.Text</option>
+                    foreach (var uzmanlik in ViewBag.UzmanlikAlanlari)
+                    {
+                        <option value="@uzmanlik.Value">@uzmanlik.Text</option>
+                    }
                 }
-            }
-            else
-            {
-                <option disabled>Uzmanlık alanı bulunmamaktadır.</option>
-            }
-        </select>
-    </div>
+                else
+                {
+                    <option disabled>Uzmanlık alanı bulunmamaktadır.</option>
+                }
+            </select>
+        </div>
 
-    <div class="form-group">
-        <label for="randevuTarihi">Randevu Tarihi</label>
-        <input type="date" class="form-control" id="randevuTarihi" name="randevuTarihi" required />
-    </div>
+        <div class="form-group mb-3">
+            <label for="randevuTarihi">Randevu Tarihi</label>
+            <input type="date" class="form-control" id="randevuTarihi" name="randevuTarihi" required />
+        </div>
 
-    <div class="form-group">
-        <label for="randevuSaati">Randevu Saati</label>
-        <input type="time" class="form-control" id="randevuSaati" name="randevuSaati" required />
-    </div>
+        <div class="form-group mb-3">
+            <label for="randevuSaati">Randevu Saati</label>
+            <input type="time" class="form-control" id="randevuSaati" name="randevuSaati" required />
+        </div>
 
-    <button type="submit" class="btn btn-primary">Randevu Al</button>
-</form>
-
-
+        <button type="submit" class="btn w-100">Randevu Al</button>
+    </form>
+</div>

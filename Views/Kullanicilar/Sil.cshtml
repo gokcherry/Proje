@@ -4,19 +4,81 @@
     ViewData["Title"] = "Kullanıcı Sil";
 }
 
-<h1>Kullanıcı Sil</h1>
+<style>
+    .delete-container {
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        max-width: 500px;
+        margin: 50px auto;
+    }
 
-<div class="alert alert-danger">
-    <h4>Bu kullanıcıyı silmek istediğinizden emin misiniz?</h4>
-    <p>
-        <strong>Ad:</strong> @Model.Ad<br />
-        <strong>Email:</strong> @Model.Email<br />
-        <strong>Telefon:</strong> @Model.Telefon<br />
-    </p>
+    h1 {
+        color: #5a5a5a;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .alert-danger {
+        background-color: #f8d7da;
+        color: #842029;
+        border: 1px solid #f5c2c7;
+        border-radius: 5px;
+        padding: 15px;
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+        border: none;
+        color: white;
+        border-radius: 5px;
+        padding: 10px 20px;
+        transition: background-color 0.3s ease;
+    }
+
+        .btn-danger:hover {
+            background-color: #bd2130;
+        }
+
+    .btn-secondary {
+        background-color: #f0f0f0;
+        color: #333333;
+        border: none;
+        border-radius: 5px;
+        padding: 10px 20px;
+        transition: background-color 0.3s ease;
+    }
+
+        .btn-secondary:hover {
+            background-color: #dcdcdc;
+        }
+
+    p {
+        color: #5a5a5a;
+        margin-top: 10px;
+    }
+
+        p strong {
+            color: #333333;
+        }
+</style>
+
+<div class="delete-container">
+    <h1>Kullanıcı Sil</h1>
+
+    <div class="alert alert-danger">
+        <h4>Bu kullanıcıyı silmek istediğinizden emin misiniz?</h4>
+        <p>
+            <strong>Ad:</strong> @Model.Ad<br />
+            <strong>Email:</strong> @Model.Email<br />
+            <strong>Telefon:</strong> @Model.Telefon<br />
+        </p>
+    </div>
+
+    <form asp-action="Sil" method="post" class="d-flex justify-content-between">
+        <input type="hidden" asp-for="Id" />
+        <button type="submit" class="btn btn-danger">Sil</button>
+        <a asp-action="Listele" class="btn btn-secondary">İptal</a>
+    </form>
 </div>
-
-<form asp-action="Sil" method="post">
-    <input type="hidden" asp-for="Id" />
-    <button type="submit" class="btn btn-danger">Sil</button>
-    <a asp-action="Listele" class="btn btn-secondary">İptal</a>
-</form>

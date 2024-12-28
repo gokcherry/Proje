@@ -4,34 +4,104 @@
     ViewData["Title"] = "Çalışan Sil";
 }
 
-<h1>Çalışan Sil</h1>
+<style>
+    .delete-container {
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        max-width: 600px;
+        margin: 50px auto;
+    }
 
-<div class="alert alert-warning">
-    <h4>Bu çalışanı silmek istediğinizden emin misiniz?</h4>
-    <p>
-        <strong>Ad:</strong> @Model.Ad<br />
-        <strong>Soyad:</strong> @Model.Soyad<br />
-        <strong>Email:</strong> @Model.Email<br />
-        <strong>Telefon:</strong> @Model.Telefon<br />
-        <strong>Uzmanlık Alanları:</strong>
-        @if (Model.UzmanlikAlanlari != null && Model.UzmanlikAlanlari.Any())
-        {
-            <ul>
-                @foreach (var uzmanlik in Model.UzmanlikAlanlari)
-                {
-                    <li>@uzmanlik.Uzmanlik.Ad</li>
-                }
-            </ul>
+    h1 {
+        color: #5a5a5a;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .alert-warning {
+        background-color: #fff3cd;
+        color: #856404;
+        border: 1px solid #ffeeba;
+        border-radius: 5px;
+        padding: 15px;
+    }
+
+    ul {
+        padding-left: 20px;
+    }
+
+        ul li {
+            color: #5a5a5a;
         }
-        else
-        {
-            <span>Uzmanlık Alanları Yok</span>
+
+    .btn-danger {
+        background-color: #dc3545;
+        border: none;
+        color: white;
+        border-radius: 5px;
+        padding: 10px 20px;
+        transition: background-color 0.3s ease;
+    }
+
+        .btn-danger:hover {
+            background-color: #bd2130;
         }
-    </p>
+
+    .btn-secondary {
+        background-color: #f0f0f0;
+        color: #333333;
+        border: none;
+        border-radius: 5px;
+        padding: 10px 20px;
+        transition: background-color 0.3s ease;
+    }
+
+        .btn-secondary:hover {
+            background-color: #dcdcdc;
+        }
+
+    p {
+        color: #5a5a5a;
+        margin-top: 10px;
+    }
+
+        p strong {
+            color: #333333;
+        }
+</style>
+
+<div class="delete-container">
+    <h1>Çalışan Sil</h1>
+
+    <div class="alert alert-warning">
+        <h4>Bu çalışanı silmek istediğinizden emin misiniz?</h4>
+        <p>
+            <strong>Ad:</strong> @Model.Ad<br />
+            <strong>Soyad:</strong> @Model.Soyad<br />
+            <strong>Email:</strong> @Model.Email<br />
+            <strong>Telefon:</strong> @Model.Telefon<br />
+            <strong>Uzmanlık Alanları:</strong>
+            @if (Model.UzmanlikAlanlari != null && Model.UzmanlikAlanlari.Any())
+            {
+                <ul>
+                    @foreach (var uzmanlik in Model.UzmanlikAlanlari)
+                    {
+                        <li>@uzmanlik.Uzmanlik.Ad</li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <span>Uzmanlık Alanları Yok</span>
+            }
+        </p>
+    </div>
+
+    <form asp-action="Sil" method="post" class="d-flex justify-content-between mt-4">
+        <input type="hidden" asp-for="ID" />
+        <button type="submit" class="btn btn-danger">Sil</button>
+        <a asp-action="Listele" class="btn btn-secondary">İptal</a>
+    </form>
 </div>
-
-<form asp-action="Sil" method="post">
-    <input type="hidden" asp-for="ID" />
-    <button type="submit" class="btn btn-danger">Sil</button>
-    <a asp-action="Listele" class="btn btn-secondary">İptal</a>
-</form>

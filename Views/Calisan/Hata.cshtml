@@ -2,9 +2,47 @@
     ViewData["Title"] = "Hata";
 }
 
-<h1>Hata</h1>
-<p>@ViewData["ErrorMessage"]</p>
+<style>
+    .error-container {
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        max-width: 500px;
+        margin: 50px auto;
+        text-align: center;
+    }
 
-<div>
+    h1 {
+        color: #d9534f;
+        font-size: 2rem;
+        margin-bottom: 20px;
+    }
+
+    p {
+        color: #5a5a5a;
+        font-size: 1rem;
+        margin-bottom: 20px;
+    }
+
+    .btn-primary {
+        background-color: #dcdcdc;
+        color: #333333;
+        border: none;
+        border-radius: 5px;
+        padding: 10px 20px;
+        transition: background-color 0.3s ease;
+        text-decoration: none;
+    }
+
+        .btn-primary:hover {
+            background-color: #bcbcbc;
+        }
+</style>
+
+<div class="error-container">
+    <h1>Hata</h1>
+    <p>@ViewData["ErrorMessage"]</p>
+
     <a asp-action="Listele" class="btn btn-primary">Listeye Geri Dön</a>
 </div>

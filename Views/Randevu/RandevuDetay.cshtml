@@ -4,18 +4,52 @@
     ViewData["Title"] = "Randevu Detayları";
 }
 
-<h2 class="text-center mt-4">Randevu Detayları</h2>
+<style>
+    .detail-container {
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        max-width: 500px;
+        margin: 50px auto;
+    }
+    h2 {
+        color: #5a5a5a;
+    }
+    .detail-container h5 {
+        color: #5a5a5a;
+        font-weight: bold;
+        border-bottom: 1px solid #e0e0e0;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+    }
+    p {
+        color: #5a5a5a;
+        margin-bottom: 10px;
+    }
+    .btn {
+        background-color: #dcdcdc;
+        color: #333333;
+        border: none;
+        border-radius: 5px;
+        padding: 10px 20px;
+        transition: background-color 0.3s ease;
+        display: block;
+        width: 100%;
+        text-align: center;
+        text-decoration: none;
+    }
+        .btn:hover {
+            background-color: #bcbcbc;
+        }
+</style>
 
-<div class="card mt-4">
-    <div class="card-body">
-        <h5 class="card-title">Randevu Bilgileri</h5>
-        <p><strong>Uzmanlık:</strong> @Model.Uzmanlik?.Ad</p>
-        <p><strong>Çalışan:</strong> @Model.Calisan?.Ad</p>
-        <p><strong>Tarih:</strong> @Model.RandevuTarihi.ToString("yyyy-MM-dd HH:mm")</p>
-        <p><strong>Durum:</strong> @Model.Durum</p>
-    </div>
-</div>
-
-<div class="mt-4">
-    <a asp-action="RandevuListele" class="btn btn-secondary">Geri Dön</a>
+<div class="detail-container">
+    <h2 class="text-center">Randevu Detayları</h2>
+    <h5>Randevu Bilgileri</h5>
+    <p><strong>Uzmanlık:</strong> @Model.Uzmanlik?.Ad</p>
+    <p><strong>Çalışan:</strong> @Model.Calisan?.Ad</p>
+    <p><strong>Tarih:</strong> @Model.RandevuTarihi.ToString("yyyy-MM-dd HH:mm")</p>
+    <p><strong>Durum:</strong> @Model.Durum</p>
+    <a asp-action="RandevuListele" class="btn mt-3">Geri Dön</a>
 </div>

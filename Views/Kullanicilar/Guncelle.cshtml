@@ -3,12 +3,73 @@
     ViewData["Title"] = "Müşteri Güncelle";
 }
 
-<div class="container mt-4">
-    <h2 class="text-center mb-4">Müşteri Güncelle</h2>
+<style>
+    .form-container {
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        max-width: 500px;
+        margin: 50px auto;
+    }
+
+    h2 {
+        color: #5a5a5a;
+        text-align: center;
+    }
+
+    label {
+        color: #5a5a5a;
+    }
+
+    .form-control {
+        border: 1px solid #dcdcdc;
+        border-radius: 5px;
+    }
+
+        .form-control:focus {
+            border-color: #a9a9a9;
+            box-shadow: 0 0 5px rgba(169, 169, 169, 0.5);
+        }
+
+    .btn {
+        border: none;
+        border-radius: 5px;
+        padding: 10px 20px;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-primary {
+        background-color: #dcdcdc;
+        color: #333333;
+    }
+
+        .btn-primary:hover {
+            background-color: #bcbcbc;
+        }
+
+    .btn-secondary {
+        background-color: #f0f0f0;
+        color: #333333;
+    }
+
+        .btn-secondary:hover {
+            background-color: #dcdcdc;
+        }
+
+    .alert {
+        background-color: #f8f9fa;
+        color: #5a5a5a;
+        border: 1px solid #dcdcdc;
+    }
+</style>
+
+<div class="form-container">
+    <h2>Müşteri Güncelle</h2>
 
     @if (TempData["Message"] != null)
     {
-        <div class="alert alert-success">
+        <div class="alert mt-3">
             @TempData["Message"]
         </div>
     }
@@ -36,7 +97,9 @@
             <input asp-for="Telefon" class="form-control" />
             <span asp-validation-for="Telefon" class="text-danger"></span>
         </div>
-        <button type="submit" class="btn btn-primary">Güncelle</button>
-        <a asp-action="Listele" class="btn btn-secondary">İptal</a>
+        <div class="d-flex justify-content-between">
+            <button type="submit" class="btn btn-primary">Güncelle</button>
+            <a asp-action="Listele" class="btn btn-secondary">İptal</a>
+        </div>
     </form>
 </div>
