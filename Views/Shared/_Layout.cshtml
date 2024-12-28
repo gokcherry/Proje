@@ -42,6 +42,11 @@
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Randevu" asp-action="Randevularim">Randevularım</a>
                                 </li>
                             }
+                        else {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="AI" asp-action="AI">AI</a>
+                            </li>
+                        }
                         }
                     </ul>
                     @await Html.PartialAsync("_LoginPartial")
