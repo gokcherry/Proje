@@ -9,7 +9,7 @@ public interface IAIService
 public class AIService : IAIService
 {
     private readonly string _apiKey = "********************";
-    private readonly string _apiUrl = "https://api.replicate.com/v1/predictions";
+    private readonly string _apiUrl = "********************";
 
     public async Task<string> ProcessPhotoWithTextAsync(IFormFile photo, string prompt)
     {
@@ -25,7 +25,7 @@ public class AIService : IAIService
 
         var payload = new
         {
-            version = "51778c7522eb99added82c0c52873d7a391eecf5fcc3ac7856613b7e6443f2f7",
+            version = "*************************************",
             input = new
             {
                 image = $"data:image/png;base64,{base64Image}",
