@@ -14,11 +14,32 @@ namespace Proje.Controllers
         {
             _context = context;
         }
-        public async Task<IActionResult> Listele()
+                public async Task<IActionResult> Listele()
         {
-            var kullanicilar = await _context.Musteri.ToListAsync();
+            var userRoleId = await _context.Roles
+                .Where(r => r.Name == "User")
+                .Select(r => r.Id)
+                .FirstOrDefaultAsync();
+
+            if (userRoleId == null)
+            {
+                return NotFound("The 'User' role does not exist.");
+            }
+
+            var kullanicilar = await _context.Users
+                .Where(u => _context.UserRoles.Any(ur => ur.UserId == u.Id && ur.RoleId == userRoleId))
+                .Select(u => new Kullanicilar
+                {
+                    Id = u.Id,
+                    Ad = u.Ad,
+                    Email = u.Email,
+                    Telefon = u.Telefon
+                })
+                .ToListAsync();
+
             return View(kullanicilar);
         }
+
         public IActionResult Ekle()
         {
             return View();
