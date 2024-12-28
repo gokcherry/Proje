@@ -88,8 +88,8 @@ static async Task SeedAdminUser(UserManager<Kullanicilar> userManager, RoleManag
             await roleManager.CreateAsync(new IdentityRole("User"));
         }
 
-        string adminEmail = "cerrahyaren@gmail.com";
-        string adminPassword = "Admin123!";
+             string adminEmail = "B221210019@sakarya.edu.tr";
+        string adminPassword = "SauAdmin123!";
 
         var adminUser = await userManager.FindByEmailAsync(adminEmail);
         if (adminUser == null)
@@ -98,9 +98,11 @@ static async Task SeedAdminUser(UserManager<Kullanicilar> userManager, RoleManag
             {
                 UserName = adminEmail,
                 Email = adminEmail,
+                Telefon ="1234567890",
+                Ad = "Admin",
+                Soyad = "Admin",
                 EmailConfirmed = true
             };
-
             var result = await userManager.CreateAsync(newAdmin, adminPassword);
             if (result.Succeeded)
             {
